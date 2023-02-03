@@ -5,10 +5,17 @@ using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
-    [SerializeField] private PlaceableObject occupyingObject;
-    [SerializeField] private MeshRenderer meshRenderer;
-    [SerializeField] private Timer highlightTimer;
-    private const float HIGHLIGHTTIMERTIMER = 0.1f;
+    [Header("Component")]
+    [SerializeField] 
+    private Timer highlightTimer;
+    [Header("References")]
+    [SerializeField] 
+    private PlaceableObject occupyingObject;
+    [SerializeField] 
+    private MeshRenderer meshRenderer;
+    private const float HIGHLIGHT_TIMER_TIME = 0.1f;
+    
+    public bool IsOccupied => occupyingObject != null;
 
     private void Awake()
     {
@@ -56,44 +63,23 @@ public class GridTile : MonoBehaviour
     }
 
     /// <summary>
-    /// Calls the timeout timer
+    /// Start timer when finished unhighlights the til
     /// </summary>
     public void StartHighlightTimer()
     {
-        StartCoroutine(HighlightTimeOut());
-    }
-
-    /// <summary>
-    /// Start timer when finished unhighlights the tile, if called when already started extends timeout time.
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator HighlightTimeOut()
-    {
-        highlightTimer.SetTimer(HIGHLIGHTTIMERTIMER + highlightTimer.CurrentTime, false);
         if (highlightTimer.IsTimerDone)
         {
+            Highlight();
+            highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, UnHighlight);
             highlightTimer.StartTimer(this);
-            while (!highlightTimer.IsTimerDone)
-            {
-                yield return null;
-            }
-            UnHighlight();
         }
-        yield return null;
+
+        highlightTimer.SetTimer(highlightTimer.CurrentTime + Time.deltaTime, false);
     }
 
     #endregion
 
     #region Occupying Object
-
-    /// <summary>
-    /// Is the tile already being occupied
-    /// </summary>
-    /// <returns>Is the tile taken</returns>
-    public bool IsOccupied()
-    {
-        return occupyingObject != null;
-    }
 
     /// <summary>
     /// Changes occupying unit

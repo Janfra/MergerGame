@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class PlaceableObject : MonoBehaviour
 {
-    [SerializeField] private MouseDragHandler dragHandler;
-    [SerializeField] private Vector3 initialPosition;
     public event Action OnTileChanged;
+
+    [SerializeField] 
+    private MouseDragHandler dragHandler;
+    [SerializeField] 
+    private Vector3 initialPosition;
 
     private void Awake()
     {
@@ -21,7 +25,11 @@ public class PlaceableObject : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        dragHandler.OnDragObjectOnTile(gameObject.transform);
+        if (!dragHandler.OnDragObjectOnTile(gameObject.transform))
+        {
+            dragHandler.OnDragObject(gameObject.transform);
+            HighlightDropTile();
+        }
     }
 
     private void OnMouseUp()
@@ -30,21 +38,43 @@ public class PlaceableObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Tries to find a tile under the current object to set it as its new position
+    /// Attempts to return the tile under this object
     /// </summary>
-    private void DropToTile()
+    /// <returns>Returns tile if found, otherwise null</returns>
+    private GridTile GetTileUnderObject()
     {
-        // Raycast downwards checking for tiles
         if (Physics.Raycast(transform.position, transform.TransformDirection(-transform.up), out RaycastHit hit, Mathf.Infinity))
         {
             if (hit.collider.TryGetComponent(out GridTile selectedTile))
             {
-                OnTileFound(selectedTile);
+                return selectedTile;
             }
-            else
-            {
-                OnTileNotFound();
-            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Highlight tile the object will be dropped on
+    /// </summary>
+    private void HighlightDropTile()
+    {
+        GridTile selectedTile = GetTileUnderObject();
+        if (selectedTile)
+        {
+            selectedTile.StartHighlightTimer();
+        }
+    }
+
+    /// <summary>
+    /// Attempts to drop the object to a tile, if not possible, set back to initial position
+    /// </summary>
+    private void DropToTile()
+    {
+        GridTile selectedTile = GetTileUnderObject();
+
+        if (selectedTile)
+        {
+            OnTileFound(selectedTile);
         }
         else
         {
@@ -58,7 +88,7 @@ public class PlaceableObject : MonoBehaviour
     /// <param name="_tileFound"></param>
     private void OnTileFound(GridTile _tileFound)
     {
-        if (_tileFound.IsOccupied())
+        if (_tileFound.IsOccupied)
         {
             GoBackToInitialPosition();
             Debug.Log($"{_tileFound.name} is already taken!");

@@ -4,26 +4,20 @@ using UnityEngine;
 
 public class GameGrid : MonoBehaviour
 {
-    [SerializeField] private int width, lenght;
-    [SerializeField] private GridTile tilePrefab;
+    [Header("Config")]
+    [SerializeField] 
+    private GridTile tilePrefab;
+    [SerializeField] 
+    private int width, lenght;
 
+    public int Width => width;
+    public int Lenght => lenght;
     private Dictionary<Vector3, GridTile> tiles;
-
     public const int TILESIZE = 1;
 
     private void Awake()
     {
         GenerateGrid();
-    }
-
-    public int GetGridWidth()
-    {
-        return width;
-    }
-
-    public int GetGridLenght()
-    {
-        return lenght;
     }
 
     #region GridGen
