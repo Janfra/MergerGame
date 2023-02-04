@@ -9,14 +9,14 @@ public class PlaceableObject : MonoBehaviour
 
     [SerializeField] 
     private MouseDragHandler dragHandler;
-    private Vector3 initialPosition;
+    private Vector3 defaultPosition;
 
     private void Awake()
     {
         dragHandler.OnAwake(GameGrid.TILESIZE);
 
         // Temporary default positioning
-        SetInitialPosition(Vector3.zero + Vector3.up, Quaternion.identity);
+        SetDefaultPosition(Vector3.zero + Vector3.up, Quaternion.identity);
     }
 
     private void OnMouseDown()
@@ -91,16 +91,14 @@ public class PlaceableObject : MonoBehaviour
     /// <param name="_tileFound"></param>
     private void OnTileFound(GridTile _tileFound)
     {
+        GoBackToDefaultPosition();
         if (_tileFound.IsOccupied)
         {
-            GoBackToInitialPosition();
             Debug.Log($"{_tileFound.name} is already taken!");
         }
         else
         {
-            OnTileChanged?.Invoke();
-            _tileFound.SetOccupyingObject(this);
-            Debug.Log($"{_tileFound.name} is now occupied by {gameObject.name}!");
+            TurnManager.Instance.AddCommand(gameObject, new MoveCommand(this, _tileFound));
         }
     }
 
@@ -109,30 +107,45 @@ public class PlaceableObject : MonoBehaviour
     /// </summary>
     private void OnTileNotFound()
     {
-        GoBackToInitialPosition();
+        GoBackToDefaultPosition();
         Debug.Log("No tile detected!");
     }
 
     #endregion
 
+    #region Object Placement
+
+    /// <summary>
+    /// Moves object to tile
+    /// </summary>
+    /// <param name="_tile"></param>
+    public void PlaceOnTile(GridTile _tile)
+    {
+        OnTileChanged?.Invoke();
+        _tile.SetOccupyingObject(this);
+        Debug.Log($"{_tile.name} is now occupied by {gameObject.name}!");
+    }
+
     /// <summary>
     /// Sets object back to initial position
     /// </summary>
-    private void GoBackToInitialPosition()
+    private void GoBackToDefaultPosition()
     {
-        transform.position = initialPosition;
+        transform.position = defaultPosition;
     }
 
     /// <summary>
     /// Sets new initial position, also sets object to new position.
     /// </summary>
-    /// <param name="_initialPosition"></param>
+    /// <param name="_defaultPosition"></param>
     /// <param name="_rotation"></param>
-    public void SetInitialPosition(Vector3 _initialPosition, Quaternion _rotation)
+    public void SetDefaultPosition(Vector3 _defaultPosition, Quaternion _rotation)
     {
-        initialPosition = _initialPosition;
-        transform.SetPositionAndRotation(_initialPosition, _rotation);
+        defaultPosition = _defaultPosition;
+        transform.SetPositionAndRotation(_defaultPosition, _rotation);
     }
+
+    #endregion
 
     private void OnDrawGizmos()
     {
@@ -140,14 +153,4 @@ public class PlaceableObject : MonoBehaviour
         Ray drawRay = new Ray(transform.position, transform.TransformDirection(-transform.up));
         Gizmos.DrawRay(drawRay);
     }
-}
-
-/// <summary>
-/// To handle all drop either for merge or for moving
-/// </summary>
-public interface IDropable
-{
-    bool IsDropValid();
-
-    void OnDrop(PlaceableObject _objectPlaced);
 }

@@ -31,6 +31,7 @@ public class TurnManager : MonoBehaviour
         if (turnActions.ContainsKey(_commandOwner))
         {
             Debug.Log($"Overwrote old command from {_commandOwner.name}");
+            turnActions[_commandOwner].Undo();
             turnActions[_commandOwner] = _command;
         }
         else
@@ -44,6 +45,7 @@ public class TurnManager : MonoBehaviour
     {
         if (turnActions.ContainsKey(_commandOwner))
         {
+            turnActions[_commandOwner].Undo();
             turnActions.Remove(_commandOwner);
         }
     }
@@ -52,14 +54,15 @@ public class TurnManager : MonoBehaviour
     {
         if(currentTurn == TurnState.PlayerTurn)
         {
+            Debug.Log("Actions executed");
             // Execute all commands stored at the start of a new turn
             foreach (var command in turnActions)
             {
                 command.Value.Execute();
             }
-        }
 
-        turnActions.Clear();
+            turnActions.Clear();
+        }
     }
 
     public static void NextTurn()

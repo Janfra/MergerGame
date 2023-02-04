@@ -35,7 +35,10 @@ public class GridTile : MonoBehaviour
 
     private void OnMouseExit()
     {
-        UnHighlight();
+        if (!IsOccupied)
+        {
+            UnHighlight();
+        }
     }
 
     #region Highlight
@@ -80,6 +83,15 @@ public class GridTile : MonoBehaviour
         highlightTimer.SetTimer(highlightTimer.CurrentTime + Time.deltaTime, false);
     }
 
+    /// <summary>
+    /// Highlight after a small delay. Avoids unhighlighting because of unocuppied for a brief moment.
+    /// </summary>
+    public void HighlightDelayed()
+    {
+        highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, Highlight);
+        highlightTimer.StartTimer(this);
+    }
+
     #endregion
 
     #region Occupying Object
@@ -88,13 +100,25 @@ public class GridTile : MonoBehaviour
     /// Changes occupying unit
     /// </summary>
     /// <param name="_newOccupyingObject"></param>
-    public void SetOccupyingObject(PlaceableObject _newOccupyingObject)
+    public void SetOccupyingObject(PlaceableObject _newOccupyingObject, bool _isPlaced = true)
     {
         occupyingObject = _newOccupyingObject;
-        _newOccupyingObject.OnTileChanged += OnObjectTileChanged;
 
+        if (_isPlaced)
+        {
+            _newOccupyingObject.OnTileChanged += OnObjectTileChanged;
+            _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile(), transform.rotation);
+        }
+    }
+
+    /// <summary>
+    /// Returns the position of an object if placed on this tile
+    /// </summary>
+    /// <returns>Position on top of tile</returns>
+    public Vector3 GetObjectPositionOnTile()
+    {
         Vector3 objectNewPosition = new Vector3(transform.position.x, transform.position.y + GameGrid.TILESIZE, transform.position.z);
-        _newOccupyingObject.SetInitialPosition(objectNewPosition, transform.rotation);
+        return objectNewPosition;
     }
 
     /// <summary>
@@ -104,6 +128,7 @@ public class GridTile : MonoBehaviour
     {
         occupyingObject.OnTileChanged -= OnObjectTileChanged;
         occupyingObject = null;
+        UnHighlight();
     }
 
     #endregion
