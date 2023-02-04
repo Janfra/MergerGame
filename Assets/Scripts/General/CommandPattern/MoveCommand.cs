@@ -5,9 +5,9 @@ using UnityEngine;
 public class MoveCommand : ICommand
 {
     GridTile movePosition;
-    PlaceableObject movingObject;
+    PlayerPlacement movingObject;
 
-    public MoveCommand(PlaceableObject _movingObject, GridTile _movePosition)
+    public MoveCommand(PlayerPlacement _movingObject, GridTile _movePosition)
     {
         movingObject = _movingObject;
         movePosition = _movePosition;

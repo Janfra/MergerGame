@@ -107,7 +107,7 @@ public class GridTile : MonoBehaviour
         if (_isPlaced)
         {
             _newOccupyingObject.OnTileChanged += OnObjectTileChanged;
-            _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile(), transform.rotation);
+            _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile());
         }
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static PlaceableObject selectedObject;
+    public static PlayerPlacement selectedObject;
 
     private void Awake()
     {

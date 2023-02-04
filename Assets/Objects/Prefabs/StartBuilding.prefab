@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4968536721384304281}
   - component: {fileID: 2802431700690387442}
   - component: {fileID: 8112724724567667722}
-  - component: {fileID: 4902768343295523473}
+  - component: {fileID: 5167582699175454227}
   m_Layer: 5
   m_Name: StartBuilding
   m_TagString: Untagged
@@ -98,7 +98,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4902768343295523473
+--- !u!114 &5167582699175454227
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,11 +107,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3711575011382274958}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4b400704f1c9894ba55091ed0f6a9dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 281f4f0b993931340a08c87e03e23041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dragHandler:
     rayCollision:
       serializedVersion: 2
       m_Bits: 64
-  initialPosition: {x: 0, y: 0, z: 0}
