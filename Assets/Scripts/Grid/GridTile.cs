@@ -1,10 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
+    [Header("Config")]
+    [SerializeField]
+    private Color defaultColour = Color.white;
+    [SerializeField]
+    private Color highlightColour = Color.green;
+
     [Header("Component")]
     [SerializeField] 
     private Timer highlightTimer;
@@ -13,8 +16,8 @@ public class GridTile : MonoBehaviour
     private PlaceableObject occupyingObject;
     [SerializeField] 
     private MeshRenderer meshRenderer;
+
     private const float HIGHLIGHT_TIMER_TIME = 0.1f;
-    
     public bool IsOccupied => occupyingObject != null;
 
     private void Awake()
@@ -42,7 +45,7 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void Highlight()
     {
-        ChangeMeshColour(Color.green);
+        ChangeMeshColour(highlightColour);
     }
 
     /// <summary>
@@ -50,7 +53,7 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void UnHighlight()
     {
-        ChangeMeshColour(Color.white);
+        ChangeMeshColour(defaultColour);
     }
 
     /// <summary>

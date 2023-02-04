@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 
 public class PlaceableObject : MonoBehaviour
@@ -10,12 +9,14 @@ public class PlaceableObject : MonoBehaviour
 
     [SerializeField] 
     private MouseDragHandler dragHandler;
-    [SerializeField] 
     private Vector3 initialPosition;
 
     private void Awake()
     {
         dragHandler.OnAwake(GameGrid.TILESIZE);
+
+        // Temporary default positioning
+        SetInitialPosition(Vector3.zero + Vector3.up, Quaternion.identity);
     }
 
     private void OnMouseDown()
@@ -36,6 +37,8 @@ public class PlaceableObject : MonoBehaviour
     {
         DropToTile();
     }
+
+    #region Tile Selection
 
     /// <summary>
     /// Attempts to return the tile under this object
@@ -102,6 +105,17 @@ public class PlaceableObject : MonoBehaviour
     }
 
     /// <summary>
+    /// Error handling for tile not found
+    /// </summary>
+    private void OnTileNotFound()
+    {
+        GoBackToInitialPosition();
+        Debug.Log("No tile detected!");
+    }
+
+    #endregion
+
+    /// <summary>
     /// Sets object back to initial position
     /// </summary>
     private void GoBackToInitialPosition()
@@ -118,15 +132,6 @@ public class PlaceableObject : MonoBehaviour
     {
         initialPosition = _initialPosition;
         transform.SetPositionAndRotation(_initialPosition, _rotation);
-    }
-
-    /// <summary>
-    /// Error handling for tile not found
-    /// </summary>
-    private void OnTileNotFound()
-    {
-        GoBackToInitialPosition();
-        Debug.Log("No tile detected!");
     }
 
     private void OnDrawGizmos()
