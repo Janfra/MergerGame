@@ -117,7 +117,7 @@ public class GridTile : MonoBehaviour
     /// <returns>Position on top of tile</returns>
     public Vector3 GetObjectPositionOnTile()
     {
-        Vector3 objectNewPosition = new Vector3(transform.position.x, transform.position.y + GameGrid.TILESIZE, transform.position.z);
+        Vector3 objectNewPosition = new(transform.position.x, transform.position.y + GameGrid.TILESIZE, transform.position.z);
         return objectNewPosition;
     }
 

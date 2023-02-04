@@ -6,12 +6,12 @@ using UnityEngine;
 public class PlaceableObject : MonoBehaviour
 {
     public event Action OnTileChanged;
+    public event Action OnMovementFinished;
 
     #region Variables
 
     private Vector3 defaultPosition;
     private float moveSpeed = 1f;
-    protected Action onMovementFinished;
 
     #endregion
 
@@ -42,7 +42,7 @@ public class PlaceableObject : MonoBehaviour
 
     private IEnumerator MoveTowardTile()
     {
-        Vector3 targetPosition = new Vector3(defaultPosition.x, transform.position.y, defaultPosition.z);
+        Vector3 targetPosition = new(defaultPosition.x, transform.position.y, defaultPosition.z);
         float alpha = 0f;
 
         while (transform.position != targetPosition)
@@ -63,7 +63,7 @@ public class PlaceableObject : MonoBehaviour
             yield return null;
         }
 
-        onMovementFinished?.Invoke();
+        OnMovementFinished?.Invoke();
     }
 
     private void MoveTo(Vector3 _position, ref float alpha)

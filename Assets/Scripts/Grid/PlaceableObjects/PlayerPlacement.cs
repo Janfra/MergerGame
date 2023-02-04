@@ -71,7 +71,6 @@ public class PlayerPlacement : PlaceableObject
     private void DropToTile()
     {
         GridTile selectedTile = GetTileUnderObject();
-
         if (selectedTile)
         {
             OnTileFound(selectedTile);
@@ -113,7 +112,7 @@ public class PlayerPlacement : PlaceableObject
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Ray drawRay = new Ray(transform.position, transform.TransformDirection(-transform.up));
+        Ray drawRay = new(transform.position, transform.TransformDirection(-transform.up));
         Gizmos.DrawRay(drawRay);
     }
 }

@@ -4,26 +4,29 @@ using UnityEngine;
 
 public class MoveCommand : ICommand
 {
-    GridTile movePosition;
-    PlayerPlacement movingObject;
+    private readonly GridTile movePosition;
+    private readonly PlayerPlacement movingObject;
 
     public MoveCommand(PlayerPlacement _movingObject, GridTile _movePosition)
     {
         movingObject = _movingObject;
         movePosition = _movePosition;
 
+        movingObject.OnMovementFinished += MovementCompleted;
         MarkTileAsOccupied();
     }
 
     public void Execute()
     {
         Debug.Log("Move command executed");
+        ICommand.IsCompleted = false;
         movingObject.PlaceOnTile(movePosition);
     }
 
     public void Undo()
     {
         MarkTileAsOccupied(false);
+        movingObject.OnMovementFinished -= MovementCompleted;
     }
 
     private void MarkTileAsOccupied(bool _isOccupied = true)
@@ -41,5 +44,10 @@ public class MoveCommand : ICommand
             movePosition.SetOccupyingObject(null, false);
             movePosition.UnHighlight();
         }
+    }
+    
+    private void MovementCompleted()
+    {
+        ICommand.IsCompleted = true;
     }
 }

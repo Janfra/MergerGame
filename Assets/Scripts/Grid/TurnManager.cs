@@ -8,17 +8,18 @@ public class TurnManager : MonoBehaviour
     public static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
 
+    Dictionary<GameObject, ICommand> turnActions = new();
     [SerializeField]
     private TurnState currentTurn = TurnState.PlayerTurn;
     private int turnCount = 0;
-    Dictionary<GameObject, ICommand> turnActions = new();
+    private bool isTurnFinished = true;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            OnTurnUpdated += (context1, context2) => ExecuteActions();
+            OnTurnUpdated += (context1, context2) => StartCoroutine(ExecuteActions());
         }
         else
         {
@@ -50,27 +51,39 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void ExecuteActions()
+    private IEnumerator ExecuteActions()
     {
+        isTurnFinished = false;
         if(currentTurn == TurnState.PlayerTurn)
         {
-            Debug.Log("Actions executed");
             // Execute all commands stored at the start of a new turn
             foreach (var command in turnActions)
             {
+                while (!ICommand.IsCompleted)
+                {
+                    yield return null;
+                }
                 command.Value.Execute();
+                yield return null;
             }
 
             turnActions.Clear();
+            yield return null;
         }
+
+        isTurnFinished = true;
+        yield return null;
     }
 
-    public static void NextTurn()
+    public void NextTurn()
     {
-        Instance.turnCount++;
-        TurnState stateUpdate = (TurnState)(Instance.turnCount % (int)TurnState.TOTAL_TURN_STATES);
-        Instance.currentTurn = stateUpdate;
-        OnTurnUpdated?.Invoke(Instance.turnCount, Instance.currentTurn);
+        if (isTurnFinished)
+        {
+            turnCount++;
+            TurnState stateUpdate = (TurnState)(turnCount % (int)TurnState.TOTAL_TURN_STATES);
+            currentTurn = stateUpdate;
+            OnTurnUpdated?.Invoke(turnCount, currentTurn);
+        }
     }
 }
 
