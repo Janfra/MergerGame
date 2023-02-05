@@ -13,6 +13,7 @@ public class MoveCommand : ICommandAction
     {
         movingObject = _movingObject;
         movePosition = _movePosition;
+        objectsAffected = null;
 
         movingObject.OnMovementFinished += MovementCompleted;
         MarkTileAsOccupied();

@@ -15,6 +15,7 @@ public class MergeCommand : ICommandAction
         objectMerger = _objectMerger;
         objectMerged = _objectMerged;
         tile = _tile;
+        objectsAffected = new GameObject[] { _objectMerged.gameObject };
     }
 
 

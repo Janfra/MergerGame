@@ -5,11 +5,10 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    public static TurnManager Instance;
+    private static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
 
-    readonly Dictionary<GameObject, ICommand> turnActions = new();
-    readonly List<GameObject> affectedObjects = new();
+    readonly Dictionary<GameObject, ICommandAction> turnActions = new();
 
     [SerializeField]
     private TurnState currentTurn = TurnState.PlayerTurn;
@@ -43,7 +42,10 @@ public class TurnManager : MonoBehaviour
     /// <param name="placementTile">Tile to place object.</param>
     private void CreateMoveCommand(PlaceableObject movingObject, GridTile placementTile)
     {
-        AddCommand(movingObject.gameObject, new MoveCommand(movingObject, placementTile));
+        if (isTurnFinished)
+        {
+            AddCommand(movingObject.gameObject, new MoveCommand(movingObject, placementTile));
+        }
     }
 
     /// <summary>
@@ -52,12 +54,15 @@ public class TurnManager : MonoBehaviour
     /// <param name="_mergeInformation">Variables to create the command.</param>
     private void CreateMergeCommand(ObjectMerge.MergeInformation _mergeInformation)
     {
-        GridTile placementTile = _mergeInformation.resultTile;
-        ObjectMerge merger = _mergeInformation.merger;
-        PlaceableObject merged = _mergeInformation.merged;
+        if (isTurnFinished)
+        {
+            GridTile placementTile = _mergeInformation.resultTile;
+            ObjectMerge merger = _mergeInformation.merger;
+            PlaceableObject merged = _mergeInformation.merged;
 
-        AddCommand(gameObject, new MoveCommand(merged, placementTile));
-        AddCommand(merged.gameObject, new MergeCommand(merger, merged.gameObject, placementTile));
+            AddCommand(gameObject, new MoveCommand(merged, placementTile));
+            AddCommand(merged.gameObject, new MergeCommand(merger, merged.gameObject, placementTile));
+        }
     }
 
     /// <summary>
@@ -65,13 +70,17 @@ public class TurnManager : MonoBehaviour
     /// </summary>
     /// <param name="_commandOwner">Object creating the command</param>
     /// <param name="_command">Command to be done</param>
-    public void AddCommand(GameObject _commandOwner, ICommand _command)
+    public void AddCommand(GameObject _commandOwner, ICommandAction _command)
     {
-        CheckGameobjectAvailability(_commandOwner);
         if (turnActions.ContainsKey(_commandOwner))
         {
             Debug.Log($"Overwrote old command from {_commandOwner.name}");
-            turnActions[_commandOwner].Undo();
+            ICommandAction oldCommand = turnActions[_commandOwner];
+            foreach (GameObject objectAffected in oldCommand.ObjectsAffected)
+            {
+                CheckGameobjectAvailability(objectAffected);
+            }
+            oldCommand.Undo();
             turnActions[_commandOwner] = _command;
         }
         else
@@ -89,9 +98,9 @@ public class TurnManager : MonoBehaviour
     {
         if (turnActions.ContainsKey(_commandOwner))
         {
+            Debug.Log($"Removed action from {_commandOwner.name}");
             turnActions[_commandOwner].Undo();
             turnActions.Remove(_commandOwner);
-            affectedObjects.Remove(_commandOwner);
         }
     }
 
@@ -101,13 +110,10 @@ public class TurnManager : MonoBehaviour
     /// <param name="_commandOwner"></param>
     private void CheckGameobjectAvailability(GameObject _commandOwner)
     {
-        if (!affectedObjects.Contains(_commandOwner))
+        if (turnActions.ContainsKey(_commandOwner))
         {
-            affectedObjects.Add(_commandOwner);
-        }
-        else
-        {
-            
+            Debug.Log($"{_commandOwner.name} was already used in an action, cancelled it.");
+            RemoveCommand(_commandOwner);
         }
     }
 
@@ -131,7 +137,6 @@ public class TurnManager : MonoBehaviour
                 yield return null;
             }
 
-            affectedObjects.Clear();
             turnActions.Clear();
             yield return null;
         }
