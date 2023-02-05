@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveCommand : ICommand
+public class MoveCommand : ICommandAction
 {
+    public GameObject[] ObjectsAffected { get => objectsAffected; set => ObjectsAffected = objectsAffected; }
+    private GameObject[] objectsAffected;
     private readonly GridTile movePosition;
-    private readonly PlayerPlacement movingObject;
+    private readonly PlaceableObject movingObject;
 
-    public MoveCommand(PlayerPlacement _movingObject, GridTile _movePosition)
+    public MoveCommand(PlaceableObject _movingObject, GridTile _movePosition)
     {
         movingObject = _movingObject;
         movePosition = _movePosition;

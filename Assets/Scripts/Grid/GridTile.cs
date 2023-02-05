@@ -11,9 +11,11 @@ public class GridTile : MonoBehaviour
     [Header("Component")]
     [SerializeField] 
     private Timer highlightTimer;
+
     [Header("References")]
     [SerializeField] 
     private PlaceableObject occupyingObject;
+    public PlaceableObject OccupyingObject => occupyingObject;
     [SerializeField] 
     private MeshRenderer meshRenderer;
 

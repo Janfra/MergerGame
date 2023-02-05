@@ -6,8 +6,11 @@ using UnityEngine;
 [System.Serializable]
 public class MouseDragHandler
 {
+    /// <summary>
+    /// Tile Layer Default
+    /// </summary>
     [SerializeField] 
-    private LayerMask rayCollision;
+    private LayerMask rayCollision = 1 << 6;
     private Camera mainCamera;
     private Vector3 yOffset;
 

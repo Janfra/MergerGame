@@ -5,23 +5,41 @@ using UnityEngine;
 
 public class PlaceableObject : MonoBehaviour
 {
+    public static event Action<PlaceableObject, GridTile> OnMoveCommand;
     public event Action OnTileChanged;
     public event Action OnMovementFinished;
 
     #region Variables
 
     private Vector3 defaultPosition;
-    private float moveSpeed = 1f;
+    
+    // May not end up being a const to change speed in game
+    private const float moveSpeed = 1f;
 
     #endregion
 
-    protected void TileChanged()
+    /// <summary>
+    /// Starts event that clears tile that was occupied.
+    /// </summary>
+    protected void ClearOccupyingTile()
     {
         OnTileChanged?.Invoke();
     }
 
     #region Object Placement
 
+    /// <summary>
+    /// Creates a movement command to the given tile.
+    /// </summary>
+    /// <param name="_placementTile">Tile to place object.</param>
+    protected void CreateMoveCommand(GridTile _placementTile)
+    {
+        OnMoveCommand?.Invoke(this, _placementTile);
+    }
+
+    /// <summary>
+    /// Start animation moving object to tile.
+    /// </summary>
     private void MoveToTile()
     {
         StartCoroutine(MoveUp());
@@ -67,6 +85,11 @@ public class PlaceableObject : MonoBehaviour
         OnMovementFinished?.Invoke();
     }
 
+    /// <summary>
+    /// Lerps object to the given location.
+    /// </summary>
+    /// <param name="_position">Target location</param>
+    /// <param name="alpha">Time/Alpha for the lerp formula</param>
     private void MoveTo(Vector3 _position, ref float alpha)
     {
         alpha += Time.deltaTime * moveSpeed;
@@ -76,18 +99,18 @@ public class PlaceableObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Moves object to tile
+    /// Moves object to tile.
     /// </summary>
-    /// <param name="_tile"></param>
+    /// <param name="_tile">Tile to place object.</param>
     public void PlaceOnTile(GridTile _tile)
     {
-        TileChanged();
+        ClearOccupyingTile();
         _tile.SetOccupyingObject(this);
         Debug.Log($"{_tile.name} is now occupied by {gameObject.name}!");
     }
 
     /// <summary>
-    /// Sets object back to initial position
+    /// Sets object back to initial position.
     /// </summary>
     protected void GoBackToDefaultPosition()
     {
@@ -110,11 +133,11 @@ public class PlaceableObject : MonoBehaviour
     #region Generics
 
     /// <summary>
-    /// Check if the given inheriting class is compatible and return it if true
+    /// Check if the given inheriting class is compatible and return it if true.
     /// </summary>
-    /// <typeparam name="T">Class to return</typeparam>
-    /// <param name="_convertObject">Object being checked</param>
-    /// <returns>Object as class, otherwise null if not compatible</returns>
+    /// <typeparam name="T">Class to return.</typeparam>
+    /// <param name="_convertObject">Object being checked.</param>
+    /// <returns>Object as class, otherwise null if not compatible.</returns>
     static public T TryToConvertTo<T>(PlaceableObject _convertObject) where T : PlaceableObject
     {
         T objectToReturn = null;
