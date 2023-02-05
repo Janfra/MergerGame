@@ -42,7 +42,14 @@ public class PlaceableObject : MonoBehaviour
     /// </summary>
     private void MoveToTile()
     {
-        StartCoroutine(MoveUp());
+        if(defaultPosition != transform.position)
+        {
+            StartCoroutine(MoveUp());
+        }
+        else
+        {
+            MovementFinished();
+        }
     }
 
     private IEnumerator MoveUp()
@@ -82,7 +89,7 @@ public class PlaceableObject : MonoBehaviour
         }
 
         Debug.Log("Movement Finished");
-        OnMovementFinished?.Invoke();
+        MovementFinished();
     }
 
     /// <summary>
@@ -96,6 +103,16 @@ public class PlaceableObject : MonoBehaviour
 
         // Multiplied by alpha 3 times for visual effect
         transform.position = Vector3.Lerp(transform.position, _position, Mathf.Clamp01(alpha * alpha * alpha));
+    }
+
+    /// <summary>
+    /// Starts on movement finished event and clears it.
+    /// </summary>
+    private void MovementFinished()
+    {
+        OnMovementFinished?.Invoke();
+        // Clear all listeners for reuse
+        OnMovementFinished = null;
     }
 
     /// <summary>

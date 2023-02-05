@@ -21,10 +21,17 @@ public class ObjectMerge : PlaceableObject
     /// <param name="_placementTile">Tile to place merging result</param>
     protected void TryToMerge(PlaceableObject _objectToMerge, GridTile _placementTile)
     {
-        ObjectMerge _mergeTo;
-        if (_mergeTo = TryToConvertTo<ObjectMerge>(_objectToMerge))
+        if(_objectToMerge != this)
         {
-            _mergeTo.CheckCompatibility(this, _placementTile);
+            ObjectMerge mergeTo;
+            if (mergeTo = TryToConvertTo<ObjectMerge>(_objectToMerge))
+            {
+                mergeTo.CheckCompatibility(this, _placementTile);
+            }
+        }
+        else
+        {
+            Debug.Log("Tried to merge to itself");
         }
     }
 

@@ -2,37 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveCommand : ICommandAction
+public class MoveCommand : ICommand
 {
-    public GameObject[] ObjectsAffected { get => objectsAffected; set => ObjectsAffected = objectsAffected; }
-    private GameObject[] objectsAffected;
     private readonly GridTile movePosition;
     private readonly PlaceableObject movingObject;
+    private readonly bool isMarkedAsOccupied;
 
-    public MoveCommand(PlaceableObject _movingObject, GridTile _movePosition)
+    public MoveCommand(PlaceableObject _movingObject, GridTile _movePosition, bool _isMarkedAsOccupied = true)
     {
         movingObject = _movingObject;
         movePosition = _movePosition;
-        objectsAffected = null;
+        isMarkedAsOccupied = _isMarkedAsOccupied;
 
         movingObject.OnMovementFinished += MovementCompleted;
-        MarkTileAsOccupied();
+
+        if (isMarkedAsOccupied)
+        {
+            MarkTileAsOccupied(true);
+        }
     }
 
     public void Execute()
     {
-        Debug.Log("Move command executed");
+        Debug.Log($"Move command executed by {movingObject.name}");
         ICommand.IsCompleted = false;
         movingObject.PlaceOnTile(movePosition);
     }
 
     public void Undo()
     {
-        MarkTileAsOccupied(false);
+        if (isMarkedAsOccupied)
+        {
+            MarkTileAsOccupied(false);
+        }
         movingObject.OnMovementFinished -= MovementCompleted;
     }
 
-    private void MarkTileAsOccupied(bool _isOccupied = true)
+    private void MarkTileAsOccupied(bool _isOccupied)
     {
         // Assuming that the tile was not occupied and can be marked and unmarked
         if (_isOccupied)

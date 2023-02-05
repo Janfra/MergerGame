@@ -2,32 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MergeCommand : ICommandAction
+public class MergeCommand : IChainedCommand
 {
-    public GameObject[] ObjectsAffected { get => objectsAffected; set => ObjectsAffected = objectsAffected; }
-    private GameObject[] objectsAffected;
     private readonly ObjectMerge objectMerger;
-    private readonly GameObject objectMerged;
+    private readonly PlaceableObject objectMerged;
     private readonly GridTile tile;
+    private ICommand moveToMerge;
+    public ICommand ChainedCommand { get => moveToMerge; set => moveToMerge = value; }
 
-    public MergeCommand(ObjectMerge _objectMerger, GameObject _objectMerged, GridTile _tile)
+    public MergeCommand(ObjectMerge _objectMerger, PlaceableObject _objectMerged, GridTile _tile)
     {
         objectMerger = _objectMerger;
         objectMerged = _objectMerged;
         tile = _tile;
-        objectsAffected = new GameObject[] { _objectMerged.gameObject };
+        ChainedCommand = new MoveCommand(_objectMerged, _tile, false);
     }
 
 
     public void Execute()
     {
-        objectMerged.SetActive(false);
-        PlaceableObject mergeResult = objectMerger.MergeObjects();
-        tile.SetOccupyingObject(mergeResult);
+        objectMerged.OnMovementFinished += GenerateMerge;
+        moveToMerge.Execute();
+    }
+
+    public GameObject GetOwner()
+    {
+        return objectMerger.gameObject;
     }
 
     public void Undo()
     {
-        
+        moveToMerge.Undo();
+    }
+
+    private void GenerateMerge()
+    {
+        objectMerged.gameObject.SetActive(false);
+        PlaceableObject mergeResult = objectMerger.MergeObjects();
+        tile.SetOccupyingObject(mergeResult);
     }
 }

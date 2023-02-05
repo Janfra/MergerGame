@@ -8,7 +8,8 @@ public class TurnManager : MonoBehaviour
     private static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
 
-    readonly Dictionary<GameObject, ICommandAction> turnActions = new();
+    readonly Dictionary<GameObject, ICommand> turnActions = new();
+    readonly Dictionary<GameObject, IChainedCommand> chainedActions = new();
 
     [SerializeField]
     private TurnState currentTurn = TurnState.PlayerTurn;
@@ -60,8 +61,9 @@ public class TurnManager : MonoBehaviour
             ObjectMerge merger = _mergeInformation.merger;
             PlaceableObject merged = _mergeInformation.merged;
 
-            AddCommand(gameObject, new MoveCommand(merged, placementTile));
-            AddCommand(merged.gameObject, new MergeCommand(merger, merged.gameObject, placementTile));
+            MergeCommand mergeCommand = new(merger, merged, placementTile);
+            AddCommand(merger.gameObject, mergeCommand);
+            AddChainedCommand(merged.gameObject, mergeCommand);
         }
     }
 
@@ -70,17 +72,13 @@ public class TurnManager : MonoBehaviour
     /// </summary>
     /// <param name="_commandOwner">Object creating the command</param>
     /// <param name="_command">Command to be done</param>
-    public void AddCommand(GameObject _commandOwner, ICommandAction _command)
+    public void AddCommand(GameObject _commandOwner, ICommand _command)
     {
+        IsObjectChained(_commandOwner);
         if (turnActions.ContainsKey(_commandOwner))
         {
             Debug.Log($"Overwrote old command from {_commandOwner.name}");
-            ICommandAction oldCommand = turnActions[_commandOwner];
-            foreach (GameObject objectAffected in oldCommand.ObjectsAffected)
-            {
-                CheckGameobjectAvailability(objectAffected);
-            }
-            oldCommand.Undo();
+            turnActions[_commandOwner].Undo();
             turnActions[_commandOwner] = _command;
         }
         else
@@ -105,20 +103,30 @@ public class TurnManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the given gameobject is not part of a command, otherwise undo old command.
+    /// Checks if the object is chained to another action, if true, remove it.
     /// </summary>
-    /// <param name="_commandOwner"></param>
-    private void CheckGameobjectAvailability(GameObject _commandOwner)
+    /// <param name="_chainedObject">Object to check</param>
+    private void IsObjectChained(GameObject _chainedObject)
     {
-        if (turnActions.ContainsKey(_commandOwner))
+        if (chainedActions.ContainsKey(_chainedObject))
         {
-            Debug.Log($"{_commandOwner.name} was already used in an action, cancelled it.");
-            RemoveCommand(_commandOwner);
+            RemoveCommand(chainedActions[_chainedObject].GetOwner());
+            chainedActions.Remove(_chainedObject);
         }
+    }
+
+    private void AddChainedCommand(GameObject _chainedObject, IChainedCommand _chainedCommand)
+    {
+        IsObjectChained(_chainedObject);
+        chainedActions.Add(_chainedObject, _chainedCommand);
     }
 
     #endregion
 
+    /// <summary>
+    /// Runs all commands stored
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ExecuteActions()
     {
         isTurnFinished = false;
@@ -137,12 +145,21 @@ public class TurnManager : MonoBehaviour
                 yield return null;
             }
 
-            turnActions.Clear();
+            ClearActions();
             yield return null;
         }
 
         isTurnFinished = true;
         yield return null;
+    }
+
+    /// <summary>
+    /// Resets actions for next turn actions
+    /// </summary>
+    private void ClearActions()
+    {
+        chainedActions.Clear();
+        turnActions.Clear();
     }
 
     public void NextTurn()

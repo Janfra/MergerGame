@@ -100,7 +100,10 @@ public class PlayerPlacement : ObjectMerge
         GoBackToDefaultPosition();
         if (_tileFound.IsOccupied)
         {
-            TryToMerge(_tileFound.OccupyingObject, _tileFound);
+            if (_tileFound.IsPlaced) // && same faction
+            {
+                TryToMerge(_tileFound.OccupyingObject, _tileFound);
+            }
         }
         else
         {

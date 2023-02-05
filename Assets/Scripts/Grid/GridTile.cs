@@ -21,6 +21,8 @@ public class GridTile : MonoBehaviour
 
     private const float HIGHLIGHT_TIMER_TIME = 0.1f;
     public bool IsOccupied => occupyingObject != null;
+    private bool isPlaced = false;
+    public bool IsPlaced => isPlaced;
 
     private void Awake()
     {
@@ -58,7 +60,10 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void UnHighlight()
     {
-        ChangeMeshColour(defaultColour);
+        if (!IsOccupied)
+        {
+            ChangeMeshColour(defaultColour);
+        }
     }
 
     /// <summary>
@@ -75,14 +80,17 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void StartHighlightTimer()
     {
-        if (highlightTimer.IsTimerDone)
+        if (!IsOccupied)
         {
-            Highlight();
-            highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, UnHighlight);
-            highlightTimer.StartTimer(this);
-        }
+            if (highlightTimer.IsTimerDone)
+            {
+                Highlight();
+                highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, UnHighlight);
+                highlightTimer.StartTimer(this);
+            }
 
-        highlightTimer.SetTimer(highlightTimer.CurrentTime + Time.deltaTime, false);
+            highlightTimer.SetTimer(highlightTimer.CurrentTime + Time.deltaTime, false);
+        }
     }
 
     /// <summary>
@@ -105,8 +113,9 @@ public class GridTile : MonoBehaviour
     public void SetOccupyingObject(PlaceableObject _newOccupyingObject, bool _isPlaced = true)
     {
         occupyingObject = _newOccupyingObject;
+        isPlaced = _isPlaced;
 
-        if (_isPlaced)
+        if (IsPlaced)
         {
             _newOccupyingObject.OnTileChanged += OnObjectTileChanged;
             _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile());
@@ -130,6 +139,7 @@ public class GridTile : MonoBehaviour
     {
         occupyingObject.OnTileChanged -= OnObjectTileChanged;
         occupyingObject = null;
+        isPlaced = false;
         UnHighlight();
     }
 
