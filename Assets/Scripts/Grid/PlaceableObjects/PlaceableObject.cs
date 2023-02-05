@@ -63,6 +63,7 @@ public class PlaceableObject : MonoBehaviour
             yield return null;
         }
 
+        Debug.Log("Movement Finished");
         OnMovementFinished?.Invoke();
     }
 
@@ -102,6 +103,28 @@ public class PlaceableObject : MonoBehaviour
     {
         defaultPosition = _defaultPosition;
         MoveToTile();
+    }
+
+    #endregion
+
+    #region Generics
+
+    /// <summary>
+    /// Check if the given inheriting class is compatible and return it if true
+    /// </summary>
+    /// <typeparam name="T">Class to return</typeparam>
+    /// <param name="_convertObject">Object being checked</param>
+    /// <returns>Object as class, otherwise null if not compatible</returns>
+    static public T TryToConvertTo<T>(PlaceableObject _convertObject) where T : PlaceableObject
+    {
+        T objectToReturn = null;
+
+        if(_convertObject is T)
+        {
+            objectToReturn = _convertObject as T;
+        }
+
+        return objectToReturn;
     }
 
     #endregion

@@ -82,10 +82,10 @@ public class PlayerPlacement : PlaceableObject
     }
 
     /// <summary>
-    /// Sets tile owner
+    /// Creates a command depending on the tile information
     /// </summary>
     /// <param name="_tileFound"></param>
-    private void OnTileFound(GridTile _tileFound)
+    protected virtual void OnTileFound(GridTile _tileFound)
     {
         GoBackToDefaultPosition();
         if (_tileFound.IsOccupied)

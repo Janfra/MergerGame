@@ -8,7 +8,7 @@ public class TurnManager : MonoBehaviour
     public static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
 
-    Dictionary<GameObject, ICommand> turnActions = new();
+    readonly Dictionary<GameObject, ICommand> turnActions = new();
     [SerializeField]
     private TurnState currentTurn = TurnState.PlayerTurn;
     private int turnCount = 0;
@@ -54,6 +54,8 @@ public class TurnManager : MonoBehaviour
     private IEnumerator ExecuteActions()
     {
         isTurnFinished = false;
+        ICommand.IsCompleted = true;
+
         if(currentTurn == TurnState.PlayerTurn)
         {
             // Execute all commands stored at the start of a new turn
