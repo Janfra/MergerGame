@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class PlaceableObject : MonoBehaviour
 {
+    #region Events
+
     public static event Action<PlaceableObject, GridTile> OnMoveCommand;
     public event Action OnTileChanged;
     public event Action OnMovementFinished;
+
+    #endregion
 
     #region Variables
 

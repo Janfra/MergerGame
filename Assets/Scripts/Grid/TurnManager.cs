@@ -5,21 +5,31 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
+    #region Instance & Events
+
     private static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
     public static event Action<bool> OnActionsCompleted;
 
+    #endregion
+
+    #region Variables
+
+    // Command Management
     readonly Dictionary<GameObject, ICommand> turnActions = new();
     readonly Dictionary<GameObject, IChainedCommand> chainedActions = new();
     private Queue<ICommand> actionQueue = new();
 
-    [SerializeField]
+    // Turn Management
     private TurnState currentTurn = TurnState.PlayerTurn;
     private int turnCount = 0;
     private bool areActionsCompleted = true;
 
+    #endregion
+
     private void Awake()
     {
+        // Create a singleton
         if (Instance == null)
         {
             Instance = this;
@@ -132,7 +142,6 @@ public class TurnManager : MonoBehaviour
     /// <summary>
     /// Stores actions to be done this turn and start clearing them.
     /// </summary>
-    /// <returns></returns>
     private void ExecuteActions()
     {
         SetActionsCompleted(false);
@@ -172,7 +181,7 @@ public class TurnManager : MonoBehaviour
     /// <summary>
     /// Sets if the actions queued are completed and starts event.
     /// </summary>
-    /// <param name="_isCompleted">Are actions finished</param>
+    /// <param name="_isCompleted">Are actions finished.</param>
     private void SetActionsCompleted(bool _isCompleted)
     {
         areActionsCompleted = _isCompleted;
@@ -180,7 +189,7 @@ public class TurnManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Resets actions for next turn actions
+    /// Resets actions for next turn actions.
     /// </summary>
     private void ClearActions()
     {
@@ -189,7 +198,7 @@ public class TurnManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Starts a new turn
+    /// Starts a new turn.
     /// </summary>
     public void NextTurn()
     {

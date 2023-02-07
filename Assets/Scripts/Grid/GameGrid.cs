@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class GameGrid : MonoBehaviour
 {
+    #region Variables & Constants
+
     [Header("Config")]
     [SerializeField] 
     private GridTile tilePrefab;
     [SerializeField] 
     private int width, lenght;
-
     public int Width => width;
     public int Lenght => lenght;
+
     private Dictionary<Vector3, GridTile> tiles;
     public const int TILESIZE = 1;
+
+    #endregion
 
     private void Awake()
     {
@@ -22,7 +26,9 @@ public class GameGrid : MonoBehaviour
 
     #region GridGen
 
-    // Creates the board 
+    /// <summary>
+    /// Creates the a board based on size set.
+    /// </summary>
     public void GenerateGrid()
     {
         tiles = new Dictionary<Vector3, GridTile>();
@@ -36,7 +42,12 @@ public class GameGrid : MonoBehaviour
         }
     }
 
-    // Create the tile using the position given with the parameters, set it, return the tile.
+    /// <summary>
+    /// Spawns a tile based on its position on the board.
+    /// </summary>
+    /// <param name="x">X position on board.</param>
+    /// <param name="z">Y position on board.</param>
+    /// <returns>Generated tile</returns>
     private GridTile GenerateTile(int x, int z)
     {
         GridTile spawnedTile;
@@ -51,9 +62,9 @@ public class GameGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the bottom corner of the grid
+    /// Get the bottom corner of the grid.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>World position of the corner of the board</returns>
     private Vector3 GetGridBottomCorner()
     {
         return new Vector3(transform.position.x - width / 2 + TILESIZE / 2, transform.position.y, transform.position.z - lenght / 2 + TILESIZE / 2);

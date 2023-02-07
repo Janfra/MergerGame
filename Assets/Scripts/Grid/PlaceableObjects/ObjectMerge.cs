@@ -3,22 +3,29 @@ using UnityEngine;
 
 public class ObjectMerge : PlaceableObject
 {
+    #region Events
+
     public static event Action<MergeInformation> OnMergeCommand;
     public static event Action OnFailedMerged;
+
+    #endregion
+
+    #region Variables 
 
     [Header("Config")]
     [SerializeField]
     private ObjectType type;
     public ObjectType Type => type;
-
     [SerializeField]
     PlaceableObject mergeResult;
+
+    #endregion
     
     /// <summary>
     /// Checks if object is a merge object, and compatibility to merge.
     /// </summary>
-    /// <param name="_objectToMerge">Object to check</param>
-    /// <param name="_placementTile">Tile to place merging result</param>
+    /// <param name="_objectToMerge">Object to check.</param>
+    /// <param name="_placementTile">Tile to place merging result.</param>
     protected void TryToMerge(PlaceableObject _objectToMerge, GridTile _placementTile)
     {
         if(_objectToMerge != this)
@@ -54,10 +61,10 @@ public class ObjectMerge : PlaceableObject
     }
 
     /// <summary>
-    /// Returns if the object type given is valid with this object
+    /// Returns if the object type given is valid with this object.
     /// </summary>
-    /// <param name="_type">Type to compare</param>
-    /// <returns>Is the merge valid</returns>
+    /// <param name="_type">Type to compare.</param>
+    /// <returns>Is the merge valid.</returns>
     private bool IsValid(ObjectType _type)
     {
         bool canBeMerged = _type == type;
@@ -67,7 +74,7 @@ public class ObjectMerge : PlaceableObject
     /// <summary>
     /// Spawns merge result and handles the disabling of this object.
     /// </summary>
-    /// <returns>Returns the spawned object</returns>
+    /// <returns>Returns the spawned object.</returns>
     public PlaceableObject MergeObjects()
     {
         PlaceableObject resultObject = Instantiate(mergeResult, transform.position, transform.rotation);
@@ -77,7 +84,7 @@ public class ObjectMerge : PlaceableObject
     }
 
     /// <summary>
-    /// Merge types available
+    /// Merge types available.
     /// </summary>
     public enum ObjectType
     {
