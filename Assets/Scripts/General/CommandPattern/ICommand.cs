@@ -1,8 +1,13 @@
-using UnityEngine;
+using System;
 
 public interface ICommand
 {
-    public static bool IsCompleted;
+    public static event Action IsCompleted;
+
+    static void CommandCompleted()
+    {
+        IsCompleted?.Invoke();
+    }
 
     void Execute();
 

@@ -25,7 +25,6 @@ public class MoveCommand : ICommand
     public void Execute()
     {
         Debug.Log($"Move command executed by {movingObject.name}");
-        ICommand.IsCompleted = false;
         movingObject.PlaceOnTile(movePosition);
     }
 
@@ -57,6 +56,6 @@ public class MoveCommand : ICommand
     
     private void MovementCompleted()
     {
-        ICommand.IsCompleted = true;
+        ICommand.CommandCompleted();
     }
 }

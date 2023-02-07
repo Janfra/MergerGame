@@ -10,12 +10,24 @@ public class PlayerPlacement : ObjectMerge
     [SerializeField]
     private LayerMask TileMask = 1 << 6;
 
+    /// <summary>
+    /// Sets if the player can start logic
+    /// </summary>
+    private bool isEnabled = true;
+
     private void Awake()
     {
         dragHandler.OnAwake(GameGrid.TILESIZE);
 
         // Temporary default positioning
         SetDefaultPosition(Vector3.zero + Vector3.up);
+
+        TurnManager.OnActionsCompleted += SetEnable;
+    }
+
+    private void OnDestroy()
+    {
+        TurnManager.OnActionsCompleted -= SetEnable;
     }
 
     private void OnMouseDown()
@@ -40,6 +52,9 @@ public class PlayerPlacement : ObjectMerge
     /// </summary>
     protected virtual void OnDragObject()
     {
+        if(!isEnabled)
+            return;
+
         if (!dragHandler.OnDragObjectOnTile(gameObject.transform))
         {
             dragHandler.OnDragObject(gameObject.transform);
@@ -80,6 +95,9 @@ public class PlayerPlacement : ObjectMerge
     /// </summary>
     private void DropToTile()
     {
+        if (!isEnabled)
+            return;
+
         GridTile selectedTile = GetTileUnderObject();
         if (selectedTile)
         {
@@ -121,6 +139,11 @@ public class PlayerPlacement : ObjectMerge
     }
 
     #endregion
+
+    public void SetEnable(bool _isEnabled)
+    {
+        isEnabled = _isEnabled;
+    }
 
     private void OnDrawGizmos()
     {

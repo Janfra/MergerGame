@@ -7,21 +7,24 @@ public class TurnManager : MonoBehaviour
 {
     private static TurnManager Instance;
     public static event Action<int, TurnState> OnTurnUpdated;
+    public static event Action<bool> OnActionsCompleted;
 
     readonly Dictionary<GameObject, ICommand> turnActions = new();
     readonly Dictionary<GameObject, IChainedCommand> chainedActions = new();
+    private Queue<ICommand> actionQueue = new();
 
     [SerializeField]
     private TurnState currentTurn = TurnState.PlayerTurn;
     private int turnCount = 0;
-    private bool isTurnFinished = true;
+    private bool areActionsCompleted = true;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            OnTurnUpdated += (context1, context2) => StartCoroutine(ExecuteActions());
+            OnTurnUpdated += (context1, context2) => ExecuteActions();
+            ICommand.IsCompleted += StartClearingQueue;
 
             ObjectMerge.OnMergeCommand += CreateMergeCommand;
             PlaceableObject.OnMoveCommand += CreateMoveCommand;
@@ -32,8 +35,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-
-    /// NOTE: Updating from ICommand to ICommandAction, NOT FINISHED.
     #region Commands
 
     /// <summary>
@@ -43,7 +44,7 @@ public class TurnManager : MonoBehaviour
     /// <param name="placementTile">Tile to place object.</param>
     private void CreateMoveCommand(PlaceableObject movingObject, GridTile placementTile)
     {
-        if (isTurnFinished)
+        if (areActionsCompleted)
         {
             AddCommand(movingObject.gameObject, new MoveCommand(movingObject, placementTile));
         }
@@ -55,7 +56,7 @@ public class TurnManager : MonoBehaviour
     /// <param name="_mergeInformation">Variables to create the command.</param>
     private void CreateMergeCommand(ObjectMerge.MergeInformation _mergeInformation)
     {
-        if (isTurnFinished)
+        if (areActionsCompleted)
         {
             GridTile placementTile = _mergeInformation.resultTile;
             ObjectMerge merger = _mergeInformation.merger;
@@ -115,6 +116,11 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if object is already chained, then adds a chained action.
+    /// </summary>
+    /// <param name="_chainedObject"></param>
+    /// <param name="_chainedCommand"></param>
     private void AddChainedCommand(GameObject _chainedObject, IChainedCommand _chainedCommand)
     {
         IsObjectChained(_chainedObject);
@@ -124,33 +130,53 @@ public class TurnManager : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// Runs all commands stored
+    /// Stores actions to be done this turn and start clearing them.
     /// </summary>
     /// <returns></returns>
-    private IEnumerator ExecuteActions()
+    private void ExecuteActions()
     {
-        isTurnFinished = false;
-        ICommand.IsCompleted = true;
-
+        SetActionsCompleted(false);
         if(currentTurn == TurnState.PlayerTurn)
         {
             // Execute all commands stored at the start of a new turn
             foreach (var command in turnActions)
             {
-                while (!ICommand.IsCompleted)
-                {
-                    yield return null;
-                }
-                command.Value.Execute();
-                yield return null;
+                actionQueue.Enqueue(command.Value);
             }
 
             ClearActions();
-            yield return null;
+            StartClearingQueue();
         }
+        else
+        {
+            SetActionsCompleted(true);
+        }
+    }
 
-        isTurnFinished = true;
-        yield return null;
+    /// <summary>
+    /// Starts executing queue of commands, once clear update to actions completed.
+    /// </summary>
+    private void StartClearingQueue()
+    {
+        if(actionQueue.Count > 0)
+        {
+            ICommand currentCommand = actionQueue.Dequeue();
+            currentCommand.Execute();
+        }
+        else
+        {
+            SetActionsCompleted(true);
+        }
+    }
+
+    /// <summary>
+    /// Sets if the actions queued are completed and starts event.
+    /// </summary>
+    /// <param name="_isCompleted">Are actions finished</param>
+    private void SetActionsCompleted(bool _isCompleted)
+    {
+        areActionsCompleted = _isCompleted;
+        OnActionsCompleted?.Invoke(areActionsCompleted);
     }
 
     /// <summary>
@@ -162,9 +188,12 @@ public class TurnManager : MonoBehaviour
         turnActions.Clear();
     }
 
+    /// <summary>
+    /// Starts a new turn
+    /// </summary>
     public void NextTurn()
     {
-        if (isTurnFinished)
+        if (areActionsCompleted)
         {
             turnCount++;
             TurnState stateUpdate = (TurnState)(turnCount % (int)TurnState.TOTAL_TURN_STATES);

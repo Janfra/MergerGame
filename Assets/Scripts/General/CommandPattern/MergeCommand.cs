@@ -18,7 +18,9 @@ public class MergeCommand : IChainedCommand
         ChainedCommand = new MoveCommand(_objectMerged, _tile, false);
     }
 
-
+    /// <summary>
+    /// Starts moving the object that will be merged, once moved, merge.
+    /// </summary>
     public void Execute()
     {
         objectMerged.OnMovementFinished += GenerateMerge;
@@ -35,10 +37,14 @@ public class MergeCommand : IChainedCommand
         moveToMerge.Undo();
     }
 
+    /// <summary>
+    /// Merge logic
+    /// </summary>
     private void GenerateMerge()
     {
         objectMerged.gameObject.SetActive(false);
         PlaceableObject mergeResult = objectMerger.MergeObjects();
         tile.SetOccupyingObject(mergeResult);
+        ICommand.CommandCompleted();
     }
 }
