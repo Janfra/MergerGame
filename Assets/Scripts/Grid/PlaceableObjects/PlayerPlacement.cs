@@ -11,7 +11,7 @@ public class PlayerPlacement : ObjectMerge
     private LayerMask TileMask = 1 << 6;
 
     /// <summary>
-    /// Sets if the player can start logic
+    /// Sets if the player can start logic.
     /// </summary>
     private bool isEnabled = true;
 
@@ -63,9 +63,9 @@ public class PlayerPlacement : ObjectMerge
     }
 
     /// <summary>
-    /// Attempts to return the tile under this object
+    /// Attempts to return the tile under this object.
     /// </summary>
-    /// <returns>Returns tile if found, otherwise null</returns>
+    /// <returns>Returns tile if found, otherwise null.</returns>
     private GridTile GetTileUnderObject()
     {
         if (Physics.Raycast(transform.position, transform.TransformDirection(-transform.up), out RaycastHit hit, Mathf.Infinity, TileMask))
@@ -79,7 +79,7 @@ public class PlayerPlacement : ObjectMerge
     }
 
     /// <summary>
-    /// Highlight tile the object will be dropped on
+    /// Highlight tile the object will be dropped on.
     /// </summary>
     private void HighlightDropTile()
     {
@@ -91,7 +91,7 @@ public class PlayerPlacement : ObjectMerge
     }
 
     /// <summary>
-    /// Attempts to drop the object to a tile, if not possible, set back to initial position
+    /// Attempts to drop the object to a tile, if not possible, set back to initial position.
     /// </summary>
     private void DropToTile()
     {
@@ -130,7 +130,7 @@ public class PlayerPlacement : ObjectMerge
     }
 
     /// <summary>
-    /// Error handling for tile not found
+    /// Error handling for tile not found.
     /// </summary>
     private void OnTileNotFound()
     {
@@ -140,6 +140,10 @@ public class PlayerPlacement : ObjectMerge
 
     #endregion
 
+    /// <summary>
+    /// Sets if this object is currently enabled for the player to interact with.
+    /// </summary>
+    /// <param name="_isEnabled">Is object usable by player.</param>
     public void SetEnable(bool _isEnabled)
     {
         isEnabled = _isEnabled;
