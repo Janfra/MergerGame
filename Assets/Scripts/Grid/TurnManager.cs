@@ -16,13 +16,20 @@ public class TurnManager : MonoBehaviour
     #region Variables
 
     // Command Management
-    readonly Dictionary<GameObject, ICommand> turnActions = new();
-    readonly Dictionary<GameObject, IChainedCommand> chainedActions = new();
-    private Queue<ICommand> actionQueue = new();
+    private readonly Dictionary<GameObject, ICommand> turnActions = new();
+    private readonly Dictionary<GameObject, IChainedCommand> chainedActions = new();
+    private readonly Queue<ICommand> actionQueue = new();
 
     // Turn Management
     private TurnState currentTurn = TurnState.PlayerTurn;
-    private int turnCount = 0;
+    /// <summary>
+    /// Total turns cycled, goes up every time a new turn starts.
+    /// </summary>
+    private int totalTurnCount = 0;
+    /// <summary>
+    /// Turn count of every time a full cycle of turns is completed.
+    /// </summary>
+    private int turnCountByStates = 0;
     private bool areActionsCompleted = true;
 
     #endregion
@@ -204,10 +211,25 @@ public class TurnManager : MonoBehaviour
     {
         if (areActionsCompleted)
         {
-            turnCount++;
-            TurnState stateUpdate = (TurnState)(turnCount % (int)TurnState.TOTAL_TURN_STATES);
+            UpdateTurnCounters();
+            TurnState stateUpdate = (TurnState)(totalTurnCount % (int)TurnState.TOTAL_TURN_STATES);
             currentTurn = stateUpdate;
-            OnTurnUpdated?.Invoke(turnCount, currentTurn);
+            OnTurnUpdated?.Invoke(turnCountByStates, currentTurn);
+        }
+    }
+
+    /// <summary>
+    /// Updates the turn counters.
+    /// </summary>
+    private void UpdateTurnCounters()
+    {
+        totalTurnCount++;
+        int totalStates = (int)TurnState.TOTAL_TURN_STATES;
+        int currentStateCycleIndex = totalTurnCount % totalStates;
+
+        if (currentStateCycleIndex == 0)
+        {
+            turnCountByStates = totalTurnCount / totalStates;
         }
     }
 }
