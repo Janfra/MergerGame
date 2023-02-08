@@ -1,7 +1,13 @@
+using System;
 using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
+    public Func<GameGrid> OnGetTileGrid;
+    public Func<Vector3, GridTile[]> OnGetTileNeighbours;
+
+    #region Variables & Constants
+
     [Header("Config")]
     [SerializeField]
     private Color defaultColour = Color.white;
@@ -23,6 +29,8 @@ public class GridTile : MonoBehaviour
     public bool IsOccupied => occupyingObject != null;
     private bool isPlaced = false;
     public bool IsPlaced => isPlaced;
+
+    #endregion
 
     private void Awake()
     {
@@ -144,4 +152,14 @@ public class GridTile : MonoBehaviour
     }
 
     #endregion
+
+    public GameGrid GetGridOwner()
+    {
+        return OnGetTileGrid?.Invoke();
+    }
+
+    public GridTile[] GetTileNeighbours()
+    {
+        return OnGetTileNeighbours?.Invoke(transform.position);
+    }
 }

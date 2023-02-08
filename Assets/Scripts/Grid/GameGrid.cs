@@ -38,6 +38,8 @@ public class GameGrid : MonoBehaviour
             for (int z = 0; z < lenght; z++)
             {
                 GridTile currentTile = GenerateTile(x, z);
+                currentTile.OnGetTileGrid += OnGetGrid;
+                // currentTile.OnGetTileNeighbours += OnGetTileNeighbours;
             }
         }
     }
@@ -71,6 +73,17 @@ public class GameGrid : MonoBehaviour
     }
 
     #endregion
+
+    private GameGrid OnGetGrid()
+    {
+        return this;
+    }
+
+    // TODO
+    //private GridTile[] OnGetTileNeighbours(Vector3 _tilePosition)
+    //{
+    //    return array results around this tile
+    //}
 
     private void OnDrawGizmos()
     {
