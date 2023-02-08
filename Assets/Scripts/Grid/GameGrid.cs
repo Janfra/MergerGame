@@ -14,8 +14,10 @@ public class GameGrid : MonoBehaviour
     public int Width => width;
     public int Lenght => lenght;
 
-    private Dictionary<Vector3, GridTile> tiles;
+    private readonly Dictionary<int, GridTile> indexToTile = new();
+    private readonly Dictionary<GridTile, int> tileToIndex = new();
     public const int TILESIZE = 1;
+    private const int MIN_SEARCH_SIZE = 3;
 
     #endregion
 
@@ -31,15 +33,13 @@ public class GameGrid : MonoBehaviour
     /// </summary>
     public void GenerateGrid()
     {
-        tiles = new Dictionary<Vector3, GridTile>();
-
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < lenght; z++)
             {
                 GridTile currentTile = GenerateTile(x, z);
-                currentTile.OnGetTileGrid += OnGetGrid;
-                // currentTile.OnGetTileNeighbours += OnGetTileNeighbours;
+                SetupTileEvents(currentTile);
+                StoreInDictionaries(x, z, currentTile);
             }
         }
     }
@@ -59,7 +59,6 @@ public class GameGrid : MonoBehaviour
         spawnedTile.transform.SetParent(transform);
         spawnedTile.name = $"Tile {x} {z}";
 
-        tiles.Add(tilePosition, spawnedTile);
         return spawnedTile;
     }
 
@@ -72,6 +71,31 @@ public class GameGrid : MonoBehaviour
         return new Vector3(transform.position.x - width / 2 + TILESIZE / 2, transform.position.y, transform.position.z - lenght / 2 + TILESIZE / 2);
     }
 
+    /// <summary>
+    /// Sets up the tile events.
+    /// </summary>
+    /// <param name="_tile"></param>
+    private void SetupTileEvents(GridTile _tile)
+    {
+        _tile.OnGetTileGrid += OnGetGrid;
+        _tile.OnGetTileNeighbours += OnGetTileNeighbours;
+    }
+
+    /// <summary>
+    /// Adds to the dictionaries the given parameters for future searching.
+    /// </summary>
+    /// <param name="_x">X index</param>
+    /// <param name="_z">Z index</param>
+    /// <param name="_tile">Tile stored</param>
+    private void StoreInDictionaries(int _x, int _z, GridTile _tile)
+    {
+        int tileIndex = ConvertFromXandZToIndex(_x, _z);
+        // Debug.Log("Tile index added: " + tileIndex);
+
+        indexToTile.Add(tileIndex, _tile);
+        tileToIndex.Add(_tile, tileIndex);
+    }
+
     #endregion
 
     private GameGrid OnGetGrid()
@@ -79,11 +103,90 @@ public class GameGrid : MonoBehaviour
         return this;
     }
 
-    // TODO
-    //private GridTile[] OnGetTileNeighbours(Vector3 _tilePosition)
-    //{
-    //    return array results around this tile
-    //}
+    private GridTile[] OnGetTileNeighbours(GridTile _tileRequesting)
+    {
+        return GetTilesOnASquareAroundTarget(_tileRequesting, MIN_SEARCH_SIZE, MIN_SEARCH_SIZE);
+    }
+
+    #region Getting Tiles
+
+    /// <summary>
+    /// Gets tiles around the tile by the size given
+    /// </summary>
+    /// <param name="_tileRequesting">Center of the square to search</param>
+    /// <param name="_width">Widht of the square</param>
+    /// <param name="_lenght">Lenght of the square</param>
+    /// <returns></returns>
+    private GridTile[] GetTilesOnASquareAroundTarget(GridTile _tileRequesting, int _width, int _lenght)
+    {
+        Debug.Log($"Search Requested by: {_tileRequesting.name}");
+        // Index setup
+        int originTileIndex = tileToIndex[_tileRequesting];
+        int originX = 0;
+        int originZ = 0;
+        GetXandZByRefFromIndex(originTileIndex, ref originX, ref originZ);
+
+        // Clamping
+        _width = Mathf.Clamp(_width, MIN_SEARCH_SIZE, width);
+        _lenght = Mathf.Clamp(_lenght, MIN_SEARCH_SIZE, lenght);
+        // Square size
+        int halfWidht = Mathf.FloorToInt(_width / 2);
+        int halfLenght = Mathf.FloorToInt(_lenght / 2);
+
+        // Return values
+        List<GridTile> tilesToReturn = new();
+
+        for (int x = originX - halfWidht; x < originX + halfWidht + 1; x++)
+        {
+            for (int z = originZ - halfLenght; z < originZ + halfLenght + 1; z++)
+            {
+                if (x == originX && z == originZ)
+                    continue;
+
+                Debug.Log($"Searching at: {x} {z}");
+                int index = ConvertFromXandZToIndex(x, z);
+                if (indexToTile.ContainsKey(index))
+                {
+                    tilesToReturn.Add(indexToTile[index]);
+                    Debug.Log($"Found tile: {indexToTile[index].name}");
+                }
+            }
+        }
+
+        return tilesToReturn.ToArray();
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Sets the given values to be the X and Z position of the given index.
+    /// </summary>
+    /// <param name="index">Index to find position</param>
+    /// <param name="_x">Value to set to the X position</param>
+    /// <param name="_z">Value to set to the Z position</param>
+    private void GetXandZByRefFromIndex(int index, ref int _x, ref int _z)
+    {
+        _z = (index % lenght);
+        _x = (index - _z) / width;
+        // Debug.Log($"Origin Index: {index}, x: {_x}, z: {_z}");
+    }
+
+    /// <summary>
+    /// Gets the index at the given position
+    /// </summary>
+    /// <param name="_x">X position</param>
+    /// <param name="_z">Z position</param>
+    /// <returns>Index at X and Z position. -1: Position not valid</returns>
+    private int ConvertFromXandZToIndex(int _x, int _z)
+    {
+        if(_x < 0 || _z < 0 || _x >= width || _z >= lenght)
+        {
+            return -1;
+        }
+
+        int index = (_x * width) + _z;
+        return index;
+    }
 
     private void OnDrawGizmos()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 public class GridTile : MonoBehaviour
 {
     public Func<GameGrid> OnGetTileGrid;
-    public Func<Vector3, GridTile[]> OnGetTileNeighbours;
+    public Func<GridTile, GridTile[]> OnGetTileNeighbours;
 
     #region Variables & Constants
 
@@ -160,6 +160,6 @@ public class GridTile : MonoBehaviour
 
     public GridTile[] GetTileNeighbours()
     {
-        return OnGetTileNeighbours?.Invoke(transform.position);
+        return OnGetTileNeighbours?.Invoke(this);
     }
 }

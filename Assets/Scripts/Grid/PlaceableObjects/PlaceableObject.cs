@@ -92,7 +92,7 @@ public class PlaceableObject : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("Movement Finished");
+        // Debug.Log("Movement Finished");
         MovementFinished();
     }
 
