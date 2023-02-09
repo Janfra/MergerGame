@@ -5,15 +5,11 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Turn References")]
+    [Header("References")]
     [SerializeField]
     private TextMeshProUGUI turnText;
     [SerializeField]
     private TextMeshProUGUI turnCountText;
-
-    [Header("Object Info References")]
-    [SerializeField]
-    private GameObject objectInfoContainer;
 
     private void Awake()
     {
