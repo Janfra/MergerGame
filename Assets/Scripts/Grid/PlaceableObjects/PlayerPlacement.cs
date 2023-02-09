@@ -32,7 +32,7 @@ public class PlayerPlacement : ObjectMerge
 
     private void OnMouseDown()
     {
-        GameManager.selectedObject = this;
+        GameManager.SetSelectedObject(this);
     }
 
     private void OnMouseDrag()

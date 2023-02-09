@@ -1,19 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class UI_InformationDisplay : MonoBehaviour
 {
-    [Header("References")]
+    [Header("Turn References")]
     [SerializeField]
     private TextMeshProUGUI turnText;
     [SerializeField]
     private TextMeshProUGUI turnCountText;
 
+    [Header("Object References")]
+    [SerializeField]
+    private GameObject container;
+    [SerializeField]
+    private TextMeshProUGUI objectName;
+
     private void Awake()
     {
         TurnManager.OnTurnUpdated += (turnCount, turnState) => UpdateTurnText(turnCount, turnState);
+        GameManager.OnSelectedObjectChange += UpdateObjectName;
+
+    }
+
+    private void UpdateObjectName(PlaceableObject _selectedObject)
+    {
+        objectName.text = _selectedObject.name;
     }
 
     private void UpdateTurnText(int _turnCount, TurnState _turnState)
