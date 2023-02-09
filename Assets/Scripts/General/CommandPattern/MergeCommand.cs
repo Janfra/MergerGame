@@ -38,7 +38,7 @@ public class MergeCommand : IChainedCommand
     }
 
     /// <summary>
-    /// Merge logic
+    /// Replace objects with the merge result
     /// </summary>
     private void GenerateMerge()
     {
@@ -46,5 +46,10 @@ public class MergeCommand : IChainedCommand
         PlaceableObject mergeResult = objectMerger.MergeObjects();
         tile.SetOccupyingObject(mergeResult);
         ICommand.CommandCompleted();
+    }
+
+    public override string ToString()
+    {
+        return "Merging";
     }
 }

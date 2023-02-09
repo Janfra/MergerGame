@@ -4,30 +4,22 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UI_InformationDisplay : MonoBehaviour
+public class UI_TurnInformation : MonoBehaviour
 {
-    [Header("Turn References")]
+    [Header("References")]
     [SerializeField]
     private TextMeshProUGUI turnText;
     [SerializeField]
     private TextMeshProUGUI turnCountText;
 
-    [Header("Object References")]
-    [SerializeField]
-    private GameObject container;
-    [SerializeField]
-    private TextMeshProUGUI objectName;
-
     private void Awake()
     {
-        TurnManager.OnTurnUpdated += (turnCount, turnState) => UpdateTurnText(turnCount, turnState);
-        GameManager.OnSelectedObjectChange += UpdateObjectName;
-
+        TurnManager.OnTurnUpdated += UpdateTurnText;
     }
 
-    private void UpdateObjectName(PlaceableObject _selectedObject)
+    private void OnDestroy()
     {
-        objectName.text = _selectedObject.name;
+        TurnManager.OnTurnUpdated -= UpdateTurnText;
     }
 
     private void UpdateTurnText(int _turnCount, TurnState _turnState)

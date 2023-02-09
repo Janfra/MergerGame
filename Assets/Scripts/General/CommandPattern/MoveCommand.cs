@@ -14,6 +14,7 @@ public class MoveCommand : ICommand
         movePosition = _movePosition;
         isMarkedAsOccupied = _isMarkedAsOccupied;
 
+        // Event to know when the object finished moving
         movingObject.OnMovementFinished += MovementCompleted;
 
         if (isMarkedAsOccupied)
@@ -37,6 +38,10 @@ public class MoveCommand : ICommand
         movingObject.OnMovementFinished -= MovementCompleted;
     }
 
+    /// <summary>
+    /// Sets whether to mark the tile to place object as taken
+    /// </summary>
+    /// <param name="_isOccupied"></param>
     private void MarkTileAsOccupied(bool _isOccupied)
     {
         // Assuming that the tile was not occupied and can be marked and unmarked
@@ -54,8 +59,16 @@ public class MoveCommand : ICommand
         }
     }
     
+    /// <summary>
+    /// Compete command once movement is finished
+    /// </summary>
     private void MovementCompleted()
     {
         ICommand.CommandCompleted();
+    }
+
+    public override string ToString()
+    {
+        return "Moving";
     }
 }

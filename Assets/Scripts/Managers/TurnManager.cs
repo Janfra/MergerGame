@@ -8,8 +8,21 @@ public class TurnManager : MonoBehaviour
     #region Instance & Events
 
     private static TurnManager Instance;
+
+    /// <summary>
+    /// Event once a new turn starts with new turn information
+    /// </summary>
     public static event Action<int, TurnState> OnTurnUpdated;
+
+    /// <summary>
+    /// Event called when all actions have been completed
+    /// </summary>
     public static event Action<bool> OnActionsCompleted;
+
+    /// <summary>
+    /// Sends command recently created
+    /// </summary>
+    public static event Action<GameObject, ICommand> OnCommandCreated;
 
     #endregion
 
@@ -45,6 +58,7 @@ public class TurnManager : MonoBehaviour
 
             ObjectMerge.OnMergeCommand += CreateMergeCommand;
             PlaceableObject.OnMoveCommand += CreateMoveCommand;
+            UI_ObjectInformation.OnRequestObjectCommand += FindObjectCommand;
         }
         else
         {
@@ -104,6 +118,8 @@ public class TurnManager : MonoBehaviour
             Debug.Log($"New command from {_commandOwner.name}");
             turnActions.Add(_commandOwner, _command);
         }
+
+        OnCommandCreated?.Invoke(_commandOwner, _command);
     }
 
     /// <summary>

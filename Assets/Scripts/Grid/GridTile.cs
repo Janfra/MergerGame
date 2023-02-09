@@ -3,8 +3,12 @@ using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
+    #region Events
+
     public Func<GameGrid> OnGetTileGrid;
     public Func<GridTile, GridTile[]> OnGetTileNeighbours;
+
+    #endregion
 
     #region Variables & Constants
 
@@ -12,7 +16,7 @@ public class GridTile : MonoBehaviour
     [SerializeField]
     private Color defaultColour = Color.white;
     [SerializeField]
-    private Color highlightColour = Color.green;
+    private Color hoverHighlightColour = Color.green;
 
     [Header("Component")]
     [SerializeField] 
@@ -60,7 +64,16 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void Highlight()
     {
-        ChangeMeshColour(highlightColour);
+        ChangeMeshColour(hoverHighlightColour);
+    }
+
+    /// <summary>
+    /// Highlights tile to the set colour.
+    /// </summary>
+    /// <param name="_newColour">Colour to set tile</param>
+    public void Highlight(Color _newColour)
+    {
+        ChangeMeshColour(_newColour);
     }
 
     /// <summary>

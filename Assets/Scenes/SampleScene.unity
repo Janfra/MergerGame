@@ -208,7 +208,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.1
+  m_fontSize: 33.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -267,7 +267,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 21185556}
-  - component: {fileID: 21185555}
+  - component: {fileID: 21185557}
   m_Layer: 0
   m_Name: TurnManager
   m_TagString: Untagged
@@ -275,18 +275,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &21185555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 21185554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a82a667c17e720a4d987ed961d7093bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &21185556
 Transform:
   m_ObjectHideFlags: 0
@@ -302,6 +290,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &21185557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21185554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b24de81bbb75c9f419dd081185d1833a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &29283294
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.65
+  m_fontSize: 46.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -793,7 +793,6 @@ GameObject:
   - component: {fileID: 281079036}
   - component: {fileID: 281079035}
   - component: {fileID: 281079034}
-  - component: {fileID: 281079038}
   m_Layer: 5
   m_Name: GUI
   m_TagString: Untagged
@@ -884,20 +883,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &281079038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281079033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9645e4b8d217cfd4abad04c813da3de5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  turnText: {fileID: 677038123}
-  turnCountText: {fileID: 926431129}
 --- !u!1 &655608715
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,7 +959,7 @@ MonoBehaviour:
   objectInfoContainer: {fileID: 0}
   objectInfoAnimator: {fileID: 655608717}
   objectNameText: {fileID: 29283296}
-  objectIntent: {fileID: 1915128614}
+  objectIntentText: {fileID: 1915128614}
 --- !u!1 &677038121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,6 +1265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 885141018}
+  - component: {fileID: 885141019}
   m_Layer: 5
   m_Name: Turn UI
   m_TagString: Untagged
@@ -1310,6 +1296,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &885141019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885141017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9645e4b8d217cfd4abad04c813da3de5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnText: {fileID: 677038123}
+  turnCountText: {fileID: 926431129}
 --- !u!1 &926431128
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,7 +1375,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.05
+  m_fontSize: 25.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1927,7 +1927,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 21185555}
+      - m_Target: {fileID: 21185557}
         m_TargetAssemblyTypeName: TurnManager, Assembly-CSharp
         m_MethodName: NextTurn
         m_Mode: 1
