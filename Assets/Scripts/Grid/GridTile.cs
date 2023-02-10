@@ -12,25 +12,16 @@ public class GridTile : MonoBehaviour
 
     #region Variables & Constants
 
-    [Header("Config")]
-    [SerializeField]
-    private Color defaultColour = Color.white;
-    [SerializeField]
-    private Color hoverHighlightColour = Color.green;
-
     [Header("Component")]
     [SerializeField] 
-    private Timer highlightTimer;
+    private MeshHighlightHelper highlightHandling;
 
     [Header("References")]
     [SerializeField] 
     private PlaceableObject occupyingObject;
     public PlaceableObject OccupyingObject => occupyingObject;
-    [SerializeField] 
-    private MeshRenderer meshRenderer;
-
-    private const float HIGHLIGHT_TIMER_TIME = 0.1f;
     public bool IsOccupied => occupyingObject != null;
+
     private bool isPlaced = false;
     public bool IsPlaced => isPlaced;
 
@@ -38,22 +29,23 @@ public class GridTile : MonoBehaviour
 
     private void Awake()
     {
-        if(meshRenderer == null)
-        {
-            meshRenderer = GetComponent<MeshRenderer>();
-        }
+        highlightHandling.SetMeshRenderer(GetComponent<MeshRenderer>());
     }
 
     private void OnMouseEnter()
     {
-        Highlight();
+        highlightHandling.SetToHoverColour();
     }
 
     private void OnMouseExit()
     {
-        if (!IsOccupied)
+        if (!IsOccupied && !highlightHandling.IsMarked)
         {
             UnHighlight();
+        }
+        else if (highlightHandling.IsMarked)
+        {
+            Highlight();
         }
     }
 
@@ -64,7 +56,7 @@ public class GridTile : MonoBehaviour
     /// </summary>
     public void Highlight()
     {
-        ChangeMeshColour(hoverHighlightColour);
+        highlightHandling.SetToHighlight();
     }
 
     /// <summary>
@@ -73,7 +65,17 @@ public class GridTile : MonoBehaviour
     /// <param name="_newColour">Colour to set tile</param>
     public void Highlight(Color _newColour)
     {
-        ChangeMeshColour(_newColour);
+        highlightHandling.SetHighlightColour(_newColour);
+        highlightHandling.SetToHighlight();
+    }
+
+    /// <summary>
+    /// Highlights tile after delay
+    /// </summary>
+    /// <param name="_newColour">Colour to set tile</param>
+    public void HighlightDelayed()
+    {
+        highlightHandling.SetHighlightAfterDelay();
     }
 
     /// <summary>
@@ -83,17 +85,8 @@ public class GridTile : MonoBehaviour
     {
         if (!IsOccupied)
         {
-            ChangeMeshColour(defaultColour);
+            highlightHandling.SetBackToDefaultColour();
         }
-    }
-
-    /// <summary>
-    /// Changes the colour of the tile mesh
-    /// </summary>
-    /// <param name="_newColour">Colour to be set</param>
-    private void ChangeMeshColour(Color _newColour)
-    {
-        meshRenderer.material.color = _newColour;
     }
 
     /// <summary>
@@ -103,24 +96,8 @@ public class GridTile : MonoBehaviour
     {
         if (!IsOccupied)
         {
-            if (highlightTimer.IsTimerDone)
-            {
-                Highlight();
-                highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, UnHighlight);
-                highlightTimer.StartTimer(this);
-            }
-
-            highlightTimer.SetTimer(highlightTimer.CurrentTime + Time.deltaTime, false);
+            highlightHandling.ColourChangeTimeout();
         }
-    }
-
-    /// <summary>
-    /// Highlight after a small delay. Avoids unhighlighting because of unocuppied for a brief moment.
-    /// </summary>
-    public void HighlightDelayed()
-    {
-        highlightTimer.SetTimer(HIGHLIGHT_TIMER_TIME, Highlight);
-        highlightTimer.StartTimer(this);
     }
 
     #endregion

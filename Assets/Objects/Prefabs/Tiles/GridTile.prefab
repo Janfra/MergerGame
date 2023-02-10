@@ -110,5 +110,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f4d748404a019458e6768eee2bd489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlightHandling:
+    meshRenderer: {fileID: 6378528563518206049}
+    owner: {fileID: 1283829950734102429}
+    colourTimeoutTimer:
+      targetTime: 1
+    defaultColour: {r: 1, g: 1, b: 1, a: 0}
+    hoverHighlightColour: {r: 1, g: 0.8518007, b: 0, a: 0}
+    highlightColour: {r: 1, g: 0, b: 0, a: 0}
   occupyingObject: {fileID: 0}
-  meshRenderer: {fileID: 6378528563518206049}
