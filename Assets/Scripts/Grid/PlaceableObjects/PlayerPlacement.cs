@@ -101,10 +101,6 @@ public class PlayerPlacement : ObjectMerge
         GridTile selectedTile = GetTileUnderObject();
         if (selectedTile)
         {
-            foreach(GridTile tile in selectedTile.GetTileNeighbours())
-            {
-                tile.Highlight();
-            }
             OnTileFound(selectedTile);
         }
         else
