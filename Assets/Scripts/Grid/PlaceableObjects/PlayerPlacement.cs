@@ -10,6 +10,9 @@ public class PlayerPlacement : ObjectMerge
     [SerializeField]
     private LayerMask TileMask = 1 << 6;
 
+    private const float DRAGGING_SELECTION_HOLD_TIME = 0.25f;
+    private static Timer selectionTimer = new(DRAGGING_SELECTION_HOLD_TIME);
+
     /// <summary>
     /// Sets if the player can start logic.
     /// </summary>
@@ -33,15 +36,20 @@ public class PlayerPlacement : ObjectMerge
     private void OnMouseDown()
     {
         GameManager.SetSelectedObject(this);
+        selectionTimer.StartTimer(this);
     }
 
     private void OnMouseDrag()
     {
-        OnDragObject();
+        if (selectionTimer.IsTimerDone)
+        {
+            OnDragObject();
+        }
     }
 
     private void OnMouseUp()
     {
+        selectionTimer.CancelTimer();
         DropToTile();
     }
 

@@ -11,9 +11,9 @@ public class MouseDragHandler
     /// </summary>
     [SerializeField] 
     private LayerMask rayCollision = 1 << 6;
-    private Camera mainCamera;
     private Vector3 yOffset;
 
+    private static Camera mainCamera;
     private const float DISTANCE_ON_NOHIT = 10f;
 
     public MouseDragHandler()

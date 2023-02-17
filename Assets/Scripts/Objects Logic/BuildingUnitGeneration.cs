@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(PlaceableObject))]
-public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration
+public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInteractive
 {
     [Header("Config")]
     [SerializeField]
@@ -73,5 +73,10 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration
     public void GenerateUnitAt(GridTile _tile, PlaceableObject _generatedUnit)
     {
         Instantiate(_generatedUnit).PlaceOnTile(_tile);
+    }
+
+    public void OnInteracted()
+    {
+        GenerateUnitOnRandomValidTile();
     }
 }

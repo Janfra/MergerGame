@@ -19,12 +19,21 @@ public class UI_ObjectInformation : MonoBehaviour
     private TextMeshProUGUI objectIntentText;
 
     private GameObject selectedObject;
+    private Action OnButtonPressed;
 
     private void Awake()
     {
         CheckReferences();
 
-        GameManager.OnSelectedObjectChange += GetSelectedObject;
+        GameManager.OnSelectedObjectChange += SetSelectedObject;
+        TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
+    }
+
+    private void OnEnable()
+    {
+        CheckReferences();
+
+        GameManager.OnSelectedObjectChange += SetSelectedObject;
         TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
     }
 
@@ -55,18 +64,6 @@ public class UI_ObjectInformation : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets selected object and updates information.
-    /// </summary>
-    /// <param name="_selectedObject">New selected object</param>
-    private void GetSelectedObject(PlaceableObject _selectedObject)
-    {
-        selectedObject = _selectedObject.gameObject;
-        SetObjectName(_selectedObject.name);
-        GetObjectIntent();
-        TurnManager.OnCommandCreated += CheckCommand;
-    }
-
-    /// <summary>
     /// Checks if command is for selected object to update intent.
     /// </summary>
     /// <param name="_commandOwner">Object that created the command.</param>
@@ -76,6 +73,25 @@ public class UI_ObjectInformation : MonoBehaviour
         if(_commandOwner == selectedObject)
         {
             SetObjectIntent(_command.ToString());
+        }
+    }
+
+    #region Setters & Getters
+
+    /// <summary>
+    /// Sets selected object and updates information.
+    /// </summary>
+    /// <param name="_selectedObject">New selected object</param>
+    private void SetSelectedObject(PlaceableObject _selectedObject, IUIInteractive _interaction)
+    {
+        selectedObject = _selectedObject.gameObject;
+        SetObjectName(_selectedObject.name);
+        GetObjectIntent();
+        TurnManager.OnCommandCreated += CheckCommand;
+
+        if(_interaction != null)
+        {
+            OnButtonPressed = _interaction.OnInteracted;
         }
     }
 
@@ -116,6 +132,11 @@ public class UI_ObjectInformation : MonoBehaviour
         objectIntentText.text = _objectIntent;
     }
 
+    #endregion
+
+
+    #region Button Functions
+
     /// <summary>
     /// Toggles animation for opening and closing UI.
     /// </summary>
@@ -132,4 +153,15 @@ public class UI_ObjectInformation : MonoBehaviour
             TurnManager.OnCommandCreated += CheckCommand;
         }
     }
+
+    /// <summary>
+    /// Runs the currently selected item interaction function
+    /// </summary>
+    public void OnObjectInteract()
+    {
+        OnButtonPressed?.Invoke();
+    }
+
+    #endregion
+
 }
