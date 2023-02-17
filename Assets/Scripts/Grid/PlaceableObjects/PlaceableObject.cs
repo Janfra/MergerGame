@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaceableObject : MonoBehaviour
@@ -8,7 +7,7 @@ public class PlaceableObject : MonoBehaviour
     #region Events
 
     public static event Action<PlaceableObject, GridTile> OnMoveCommand;
-    public event Action OnTileChanged;
+    public event Action<GridTile> OnTileChanged;
     public event Action OnMovementFinished;
 
     #endregion
@@ -22,12 +21,18 @@ public class PlaceableObject : MonoBehaviour
 
     #endregion
 
+    private void OnDisable()
+    {
+        OnTileChanged = null;
+        OnMovementFinished = null;
+    }
+
     /// <summary>
     /// Starts event that clears tile that was occupied.
     /// </summary>
-    protected void ClearOccupyingTile()
+    protected void TileChangedTo(GridTile _newTile)
     {
-        OnTileChanged?.Invoke();
+        OnTileChanged?.Invoke(_newTile);
     }
 
     #region Object Placement
@@ -125,7 +130,7 @@ public class PlaceableObject : MonoBehaviour
     /// <param name="_tile">Tile to place object.</param>
     public void PlaceOnTile(GridTile _tile)
     {
-        ClearOccupyingTile();
+        TileChangedTo(_tile);
         _tile.SetOccupyingObject(this);
         Debug.Log($"{_tile.name} is now occupied by {gameObject.name}!");
     }

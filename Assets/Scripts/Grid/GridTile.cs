@@ -115,7 +115,7 @@ public class GridTile : MonoBehaviour
 
         if (IsPlaced)
         {
-            _newOccupyingObject.OnTileChanged += OnObjectTileChanged;
+            _newOccupyingObject.OnTileChanged += context => OnObjectTileChanged();
             _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile());
         }
     }
@@ -135,7 +135,7 @@ public class GridTile : MonoBehaviour
     /// </summary>
     private void OnObjectTileChanged()
     {
-        occupyingObject.OnTileChanged -= OnObjectTileChanged;
+        occupyingObject.OnTileChanged -= context => OnObjectTileChanged();
         occupyingObject = null;
         isPlaced = false;
         UnHighlight();

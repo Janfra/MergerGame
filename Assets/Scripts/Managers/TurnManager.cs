@@ -59,6 +59,7 @@ public class TurnManager : MonoBehaviour
             ObjectMerge.OnMergeCommand += CreateMergeCommand;
             PlaceableObject.OnMoveCommand += CreateMoveCommand;
             UI_ObjectInformation.OnRequestObjectCommand += FindObjectCommand;
+            IUnitGeneration.OnUnitGenerationCommand += CreateGenerationCommand;
         }
         else
         {
@@ -96,6 +97,19 @@ public class TurnManager : MonoBehaviour
             MergeCommand mergeCommand = new(merger, merged, placementTile);
             AddCommand(merger.gameObject, mergeCommand);
             AddChainedCommand(merged.gameObject, mergeCommand);
+        }
+    }
+
+    /// <summary>
+    /// Creates a generation command with the unit generation information.
+    /// </summary>
+    /// <param name="_generationInformation">All unit generation information.</param>
+    private void CreateGenerationCommand(IUnitGeneration.UnitGenerationInfo _generationInformation)
+    {
+        if (areActionsCompleted)
+        {
+            GenerateUnitCommand generateUnitCommand = new GenerateUnitCommand(_generationInformation.PlacementTile, _generationInformation.GeneratedUnit, _generationInformation.Generator);
+            AddCommand(_generationInformation.GeneratorGameObject, generateUnitCommand);
         }
     }
 

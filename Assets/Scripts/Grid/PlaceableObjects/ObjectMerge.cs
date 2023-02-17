@@ -78,7 +78,7 @@ public class ObjectMerge : PlaceableObject
     public PlaceableObject MergeObjects()
     {
         PlaceableObject resultObject = Instantiate(mergeResult, transform.position, transform.rotation);
-        ClearOccupyingTile();
+        TileChangedTo(null);
         gameObject.SetActive(false);
         return resultObject;
     }
