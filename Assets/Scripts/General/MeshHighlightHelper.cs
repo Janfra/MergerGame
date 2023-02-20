@@ -70,7 +70,7 @@ public class MeshHighlightHelper
     {
         if (colourTimeoutTimer.IsTimerDone)
         {
-            SetToHighlight();
+            ChangeMeshColour(highlightColour);
             colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToDefaultColour);
             colourTimeoutTimer.StartTimer(owner);
         }
@@ -88,11 +88,14 @@ public class MeshHighlightHelper
     }
 
     /// <summary>
-    /// Sets colour to hover highlight.
+    /// Sets colour to hover highlight while not being on timed highlight.
     /// </summary>
     public void SetToHoverColour()
     {
-        ChangeMeshColour(hoverHighlightColour);
+        if (colourTimeoutTimer.IsTimerDone)
+        {
+            ChangeMeshColour(hoverHighlightColour);
+        }
     }
 
     /// <summary>

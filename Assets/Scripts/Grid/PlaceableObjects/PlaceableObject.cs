@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(PlacementEvents))]
 public class PlaceableObject : MonoBehaviour
 {
     #region Events
@@ -14,6 +15,8 @@ public class PlaceableObject : MonoBehaviour
 
     #region Variables
 
+    [SerializeField]
+    protected PlacementEvents placementEvents;
     private Vector3 defaultPosition;
     
     // May not end up being a const to change speed in game
@@ -21,11 +24,28 @@ public class PlaceableObject : MonoBehaviour
 
     #endregion
 
-    private void OnDisable()
+    #region Unity Functions
+
+    protected virtual void OnDisable()
     {
         OnTileChanged = null;
         OnMovementFinished = null;
     }
+
+    protected virtual void OnEnable()
+    {
+        if(placementEvents == null)
+        {
+            placementEvents = GetComponent<PlacementEvents>();
+        }
+    }
+
+    protected virtual void OnMouseDown()
+    {
+        placementEvents.CallOnSelectedEvent();
+    }
+
+    #endregion
 
     /// <summary>
     /// Starts event that clears tile that was occupied.
@@ -130,6 +150,7 @@ public class PlaceableObject : MonoBehaviour
     /// <param name="_tile">Tile to place object.</param>
     public void PlaceOnTile(GridTile _tile)
     {
+        placementEvents.SetObjectTile(_tile);
         TileChangedTo(_tile);
         _tile.SetOccupyingObject(this);
         Debug.Log($"{_tile.name} is now occupied by {gameObject.name}!");

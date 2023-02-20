@@ -49,7 +49,6 @@ public class MoveCommand : ICommand
         {
             Debug.Log($"{movePosition.name} was set as will be occupied by command");
             movePosition.SetOccupyingObject(movingObject, false);
-            movePosition.HighlightDelayed();
         }
         else
         {

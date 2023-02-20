@@ -10,13 +10,15 @@ public class PlayerPlacement : ObjectMerge
     [SerializeField]
     private LayerMask TileMask = 1 << 6;
 
-    private const float DRAGGING_SELECTION_HOLD_TIME = 0.25f;
+    private const float DRAGGING_SELECTION_HOLD_TIME = 0.1f;
     private static Timer selectionTimer = new(DRAGGING_SELECTION_HOLD_TIME);
 
     /// <summary>
     /// Sets if the player can start logic.
     /// </summary>
     private bool isEnabled = true;
+
+    #region Unity Functions
 
     private void Awake()
     {
@@ -33,8 +35,9 @@ public class PlayerPlacement : ObjectMerge
         TurnManager.OnActionsCompleted -= SetEnable;
     }
 
-    private void OnMouseDown()
+    protected override void OnMouseDown()
     {
+        base.OnMouseDown();
         GameManager.SetSelectedObject(this);
         selectionTimer.StartTimer(this);
     }
@@ -49,9 +52,14 @@ public class PlayerPlacement : ObjectMerge
 
     private void OnMouseUp()
     {
+        if (selectionTimer.IsTimerDone)
+        {
+            DropToTile();
+        }
         selectionTimer.CancelTimer();
-        DropToTile();
     }
+
+    #endregion
 
     #region Tile Selection
 
@@ -92,7 +100,7 @@ public class PlayerPlacement : ObjectMerge
     private void HighlightDropTile()
     {
         GridTile selectedTile = GetTileUnderObject();
-        if (selectedTile)
+        if (selectedTile && !selectedTile.IsMarked)
         {
             selectedTile.StartHighlightTimer();
         }
@@ -133,7 +141,14 @@ public class PlayerPlacement : ObjectMerge
         }
         else
         {
-            CreateMoveCommand(_tileFound);
+            if (placementEvents.IsTilePartOfEvent(_tileFound))
+            {
+                placementEvents.CallPlacementEvent(_tileFound, this);
+            }
+            else
+            {
+                CreateMoveCommand(_tileFound);
+            }
         }
     }
 

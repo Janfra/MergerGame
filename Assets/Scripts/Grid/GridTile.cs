@@ -25,6 +25,8 @@ public class GridTile : MonoBehaviour
     private bool isPlaced = false;
     public bool IsPlaced => isPlaced;
 
+    public bool IsMarked => highlightHandling.IsMarked;
+
     #endregion
 
     private void Awake()
@@ -90,7 +92,7 @@ public class GridTile : MonoBehaviour
     }
 
     /// <summary>
-    /// Start timer when finished unhighlights the til
+    /// Start timer when finished unhighlights the tile
     /// </summary>
     public void StartHighlightTimer()
     {
@@ -113,10 +115,15 @@ public class GridTile : MonoBehaviour
         occupyingObject = _newOccupyingObject;
         isPlaced = _isPlaced;
 
-        if (IsPlaced)
+        if (IsPlaced && _newOccupyingObject != null)
         {
             _newOccupyingObject.OnTileChanged += context => OnObjectTileChanged();
             _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile());
+        }
+        else if(occupyingObject != null)
+        {
+            Debug.Log("Highlight");
+            HighlightDelayed();
         }
     }
 

@@ -20,6 +20,7 @@ public class GenerateUnitCommand : ICommand
     public void Execute()
     {
         generator.GenerateUnitAt(placementTile, generatedUnit);
+        ICommand.CommandCompleted();
     }
 
     public void Undo()

@@ -51,7 +51,7 @@ public class MouseDragHandler
         {
             _objectTransform.position = hit.point + yOffset;
 
-            if (hit.collider.TryGetComponent(out GridTile hoveredTile))
+            if (hit.collider.TryGetComponent(out GridTile hoveredTile) && !hoveredTile.IsMarked)
             {
                 hoveredTile.StartHighlightTimer();
             }

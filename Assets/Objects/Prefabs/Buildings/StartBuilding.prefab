@@ -113,13 +113,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   mergeResult: {fileID: 5167582699175454227}
-  dragHandler:
-    rayCollision:
-      serializedVersion: 2
-      m_Bits: 64
-  TileMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!54 &6894390405088288216
 Rigidbody:
   m_ObjectHideFlags: 0
