@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4968536721384304281}
   - component: {fileID: 2802431700690387442}
   - component: {fileID: 8112724724567667722}
+  - component: {fileID: 1831918376805021328}
   - component: {fileID: 5167582699175454227}
   - component: {fileID: 6894390405088288216}
   m_Layer: 5
@@ -99,6 +100,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1831918376805021328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3711575011382274958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24fba535644d3ef47a6af3e59815e413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5167582699175454227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,8 +124,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 281f4f0b993931340a08c87e03e23041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  placementEvents: {fileID: 0}
   type: 0
   mergeResult: {fileID: 5167582699175454227}
+  dragHandler:
+    rayCollision:
+      serializedVersion: 2
+      m_Bits: 64
+  TileMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!54 &6894390405088288216
 Rigidbody:
   m_ObjectHideFlags: 0
