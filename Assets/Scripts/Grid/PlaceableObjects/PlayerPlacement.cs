@@ -107,7 +107,7 @@ public class PlayerPlacement : ObjectMerge
         GridTile selectedTile = GetTileUnderObject();
         if (selectedTile && !selectedTile.IsMarked)
         {
-            selectedTile.StartHighlightTimer();
+            selectedTile.StartHoverTimer();
         }
     }
 

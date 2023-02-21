@@ -120,7 +120,18 @@ public class GridTile : MonoBehaviour
     {
         if (!IsOccupied)
         {
-            highlightHandling.ColourChangeTimeout();
+            highlightHandling.HighlightWithTimeout();
+        }
+    }
+
+    /// <summary>
+    /// Start timer when finished unhighlights the tile
+    /// </summary>
+    public void StartHoverTimer()
+    {
+        if (!IsOccupied)
+        {
+            highlightHandling.HoverWithTimeout();
         }
     }
 

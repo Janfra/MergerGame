@@ -145,7 +145,6 @@ public class PlaceableEvents : MonoBehaviour
         {
             eventTile.Add(_tile);
             SetOnClickEvent(_tile, _onClickableEvent);
-            _tile.Highlight();
         }
     }
 

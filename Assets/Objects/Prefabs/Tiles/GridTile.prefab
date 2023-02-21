@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6378528563518206049}
   - component: {fileID: 5098392227786830102}
   - component: {fileID: 1283829950734102429}
+  - component: {fileID: 5314576859191609064}
   m_Layer: 6
   m_Name: GridTile
   m_TagString: Untagged
@@ -119,3 +120,16 @@ MonoBehaviour:
     hoverHighlightColour: {r: 1, g: 0.8518007, b: 0, a: 0}
     highlightColour: {r: 1, g: 0, b: 0, a: 0}
   occupyingObject: {fileID: 0}
+--- !u!114 &5314576859191609064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742056088049239364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b33d44d7f8f25264087070cdb2a4b24f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onClickHighlightColour: {fileID: 11400000, guid: a24904f953fcd5a48b245e9c9898c57a, type: 2}

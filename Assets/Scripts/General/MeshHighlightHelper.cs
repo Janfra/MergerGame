@@ -23,6 +23,7 @@ public class MeshHighlightHelper
     private Color hoverHighlightColour = Color.green;
     [SerializeField]
     private Color highlightColour = Color.red;
+    private Color colourBeforeTimeout;
 
     private bool isMarked = false;
     public bool IsMarked => isMarked;
@@ -66,12 +67,43 @@ public class MeshHighlightHelper
     /// <summary>
     /// Start timer when finished set mesh colour to default.
     /// </summary>
-    public void ColourChangeTimeout()
+    public void HighlightWithTimeout(bool _setToOriginalColour = true)
     {
         if (colourTimeoutTimer.IsTimerDone)
         {
+            colourBeforeTimeout = meshRenderer.material.color;
             ChangeMeshColour(highlightColour);
-            colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToDefaultColour);
+            if (_setToOriginalColour)
+            {
+                colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToOriginalColour);
+            }
+            else
+            {
+                colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToDefaultColour);
+            }
+            colourTimeoutTimer.StartTimer(owner);
+        }
+
+        colourTimeoutTimer.SetTimer(colourTimeoutTimer.CurrentTime + Time.deltaTime, false);
+    }
+
+    /// <summary>
+    /// Start timer when finished set mesh colour to default.
+    /// </summary>
+    public void HoverWithTimeout(bool _setToOriginalColour = true)
+    {
+        if (colourTimeoutTimer.IsTimerDone)
+        {
+            colourBeforeTimeout = meshRenderer.material.color;
+            ChangeMeshColour(hoverHighlightColour);
+            if (_setToOriginalColour)
+            {
+                colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToOriginalColour);
+            }
+            else
+            {
+                colourTimeoutTimer.SetTimer(HIGHLIGHT_TIMER_TIME, SetBackToDefaultColour);
+            }
             colourTimeoutTimer.StartTimer(owner);
         }
 
@@ -85,6 +117,14 @@ public class MeshHighlightHelper
     {
         ChangeMeshColour(defaultColour);
         isMarked = false;
+    }
+
+    /// <summary>
+    /// Used for setting colour back to original after timeout
+    /// </summary>
+    private void SetBackToOriginalColour()
+    {
+        ChangeMeshColour(colourBeforeTimeout);
     }
 
     /// <summary>

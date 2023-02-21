@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(GridTile))]
 public class GridTileEvents : MonoBehaviour
 {
+    [SerializeField]
+    private SO_EventHighlightColours onClickHighlightColour;
     private GridTile ownerTile;
     private Action<GridTile> onClicked;
 
@@ -30,6 +32,7 @@ public class GridTileEvents : MonoBehaviour
     public void SetOnClickedEvent(IOnTileClickableEvent runOnClick)
     {
         onClicked = runOnClick.OnTileSelected;
+        ownerTile.Highlight(onClickHighlightColour.eventColour);
     }
 
     /// <summary>
