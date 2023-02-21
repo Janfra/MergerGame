@@ -1,11 +1,19 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(GridTileEvents))]
 public class GridTile : MonoBehaviour
 {
-    #region Events
+    #region Delegates
 
+    /// <summary>
+    /// Invoked when requesting the GameGrid storing this tile.
+    /// </summary>
     public Func<GameGrid> OnGetTileGrid;
+
+    /// <summary>
+    /// Invoked when requesting neighbours of this tile.
+    /// </summary>
     public Func<GridTile, GridTile[]> OnGetTileNeighbours;
 
     #endregion
@@ -20,6 +28,9 @@ public class GridTile : MonoBehaviour
     [SerializeField] 
     private PlaceableObject occupyingObject;
     public PlaceableObject OccupyingObject => occupyingObject;
+    private GridTileEvents tileEvents;
+    public GridTileEvents TileEvents => tileEvents;
+
     public bool IsOccupied => occupyingObject != null;
 
     private bool isPlaced = false;
@@ -32,6 +43,17 @@ public class GridTile : MonoBehaviour
     private void Awake()
     {
         highlightHandling.SetMeshRenderer(GetComponent<MeshRenderer>());
+        tileEvents = GetComponent<GridTileEvents>();
+        tileEvents.SetOwnerTile(this);
+    }
+
+    private void OnEnable()
+    {
+        if(tileEvents == null)
+        {
+            tileEvents = GetComponent<GridTileEvents>();
+            tileEvents.SetOwnerTile(this);
+        }
     }
 
     private void OnMouseEnter()
@@ -117,7 +139,7 @@ public class GridTile : MonoBehaviour
 
         if (IsPlaced && _newOccupyingObject != null)
         {
-            _newOccupyingObject.OnTileChanged += context => OnObjectTileChanged();
+            _newOccupyingObject.OnTileChanged += BindTileClearing;
             _newOccupyingObject.SetDefaultPosition(GetObjectPositionOnTile());
         }
         else if(occupyingObject != null)
@@ -128,7 +150,7 @@ public class GridTile : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the position of an object if placed on this tile
+    /// Returns the position of placed object on this tile
     /// </summary>
     /// <returns>Position on top of tile</returns>
     public Vector3 GetObjectPositionOnTile()
@@ -138,17 +160,27 @@ public class GridTile : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets called when object leaves tile
+    /// Binds clearing this tile space to event, once it gets called, it removes itself from the event. NOTE: Added since Lambdas does not let me remove event
+    /// </summary>
+    private void BindTileClearing(GridTile _context1)
+    {
+        occupyingObject.OnTileChanged -= BindTileClearing;
+        OnObjectTileChanged();
+    }
+
+    /// <summary>
+    /// Gets called when object leaves tile to clear space
     /// </summary>
     private void OnObjectTileChanged()
     {
-        occupyingObject.OnTileChanged -= context => OnObjectTileChanged();
         occupyingObject = null;
         isPlaced = false;
         UnHighlight();
     }
 
     #endregion
+
+    #region Getters
 
     public GameGrid GetGridOwner()
     {
@@ -159,4 +191,6 @@ public class GridTile : MonoBehaviour
     {
         return OnGetTileNeighbours?.Invoke(this);
     }
+
+    #endregion
 }

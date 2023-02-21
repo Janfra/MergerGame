@@ -2,13 +2,29 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(PlacementEvents))]
+[RequireComponent(typeof(PlaceableEvents))]
 public class PlaceableObject : MonoBehaviour
 {
     #region Events
 
+    /// <summary>
+    /// Invoked when a new object is selected.
+    /// </summary>
+    public static event Action<PlaceableObject> OnSelectedObjectChange;
+
+    /// <summary>
+    /// Invoked when a move command is created.
+    /// </summary>
     public static event Action<PlaceableObject, GridTile> OnMoveCommand;
+
+    /// <summary>
+    /// Invoked when object moves to a new tile.
+    /// </summary>
     public event Action<GridTile> OnTileChanged;
+
+    /// <summary>
+    /// Invoked when object finished moving to a new tile.
+    /// </summary>
     public event Action OnMovementFinished;
 
     #endregion
@@ -16,11 +32,12 @@ public class PlaceableObject : MonoBehaviour
     #region Variables
 
     [SerializeField]
-    protected PlacementEvents placementEvents;
+    protected PlaceableEvents placementEvents;
     private Vector3 defaultPosition;
     
     // May not end up being a const to change speed in game
     private const float moveSpeed = 1f;
+    private static PlaceableObject selectedObject;
 
     #endregion
 
@@ -36,16 +53,53 @@ public class PlaceableObject : MonoBehaviour
     {
         if(placementEvents == null)
         {
-            placementEvents = GetComponent<PlacementEvents>();
+            placementEvents = GetComponent<PlaceableEvents>();
         }
     }
 
     protected virtual void OnMouseDown()
     {
-        placementEvents.CallOnSelectedEvent();
+        SetSelectedObject(this);
     }
 
     #endregion
+
+    #region Object Selection
+
+    /// <summary>
+    /// Call on select event.
+    /// </summary>
+    public void SelectObject()
+    {
+        placementEvents.OnFirstSelected();
+    }
+
+    /// <summary>
+    /// Call on reselect event.
+    /// </summary>
+    public void ReselectObject()
+    {
+        placementEvents.OnReselected();
+    }
+
+    public static void SetSelectedObject(PlaceableObject _selectedObject)
+    {
+        if (selectedObject == _selectedObject)
+        {
+            selectedObject.ReselectObject();
+            return;
+        }
+        else
+        {
+            selectedObject = _selectedObject;
+            OnSelectedObjectChange?.Invoke(selectedObject);
+            selectedObject.SelectObject();
+        }
+    }
+
+    #endregion
+
+    #region Object Placement
 
     /// <summary>
     /// Starts event that clears tile that was occupied.
@@ -54,8 +108,6 @@ public class PlaceableObject : MonoBehaviour
     {
         OnTileChanged?.Invoke(_newTile);
     }
-
-    #region Object Placement
 
     /// <summary>
     /// Creates a movement command to the given tile.

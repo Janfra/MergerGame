@@ -19,13 +19,12 @@ public class UI_ObjectInformation : MonoBehaviour
     private TextMeshProUGUI objectIntentText;
 
     private GameObject selectedObject;
-    private Action OnButtonPressed;
 
     private void Awake()
     {
         CheckReferences();
 
-        GameManager.OnSelectedObjectChange += SetSelectedObject;
+        PlaceableObject.OnSelectedObjectChange += SetSelectedObject;
         TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
     }
 
@@ -33,7 +32,7 @@ public class UI_ObjectInformation : MonoBehaviour
     {
         CheckReferences();
 
-        GameManager.OnSelectedObjectChange += SetSelectedObject;
+        PlaceableObject.OnSelectedObjectChange += SetSelectedObject;
         TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
     }
 
@@ -82,17 +81,12 @@ public class UI_ObjectInformation : MonoBehaviour
     /// Sets selected object and updates information.
     /// </summary>
     /// <param name="_selectedObject">New selected object</param>
-    private void SetSelectedObject(PlaceableObject _selectedObject, IUIInteractive _interaction)
+    private void SetSelectedObject(PlaceableObject _selectedObject)
     {
         selectedObject = _selectedObject.gameObject;
         SetObjectName(_selectedObject.name);
         GetObjectIntent();
         TurnManager.OnCommandCreated += CheckCommand;
-
-        if(_interaction != null)
-        {
-            OnButtonPressed = _interaction.OnInteracted;
-        }
     }
 
     /// <summary>
@@ -152,14 +146,6 @@ public class UI_ObjectInformation : MonoBehaviour
         {
             TurnManager.OnCommandCreated += CheckCommand;
         }
-    }
-
-    /// <summary>
-    /// Runs the currently selected item interaction function
-    /// </summary>
-    public void OnObjectInteract()
-    {
-        OnButtonPressed?.Invoke();
     }
 
     #endregion

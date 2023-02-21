@@ -26,5 +26,6 @@ public class GenerateUnitCommand : ICommand
     public void Undo()
     {
         placementTile.SetOccupyingObject(null, false);
+        placementTile.UnHighlight();
     }
 }

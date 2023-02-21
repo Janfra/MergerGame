@@ -98,6 +98,8 @@ public class GameGrid : MonoBehaviour
 
     #endregion
 
+    #region Getters
+
     private GameGrid OnGetGrid()
     {
         return this;
@@ -108,8 +110,6 @@ public class GameGrid : MonoBehaviour
         return GetTilesOnASquareAroundTarget(_tileRequesting, MIN_SEARCH_SIZE, MIN_SEARCH_SIZE);
     }
 
-    #region Getting Tiles
-
     /// <summary>
     /// Gets tiles around the tile by the size given
     /// </summary>
@@ -119,7 +119,6 @@ public class GameGrid : MonoBehaviour
     /// <returns></returns>
     private GridTile[] GetTilesOnASquareAroundTarget(GridTile _tileRequesting, int _width, int _lenght)
     {
-        Debug.Log($"Search Requested by: {_tileRequesting.name}");
         // Index setup
         int originTileIndex = tileToIndex[_tileRequesting];
         int originX = 0;
@@ -143,20 +142,16 @@ public class GameGrid : MonoBehaviour
                 if (x == originX && z == originZ)
                     continue;
 
-                Debug.Log($"Searching at: {x} {z}");
                 int index = ConvertFromXandZToIndex(x, z);
                 if (indexToTile.ContainsKey(index))
                 {
                     tilesToReturn.Add(indexToTile[index]);
-                    Debug.Log($"Found tile: {indexToTile[index].name}");
                 }
             }
         }
 
         return tilesToReturn.ToArray();
     }
-
-    #endregion
 
     /// <summary>
     /// Sets the given values to be the X and Z position of the given index.
@@ -170,6 +165,8 @@ public class GameGrid : MonoBehaviour
         _x = (index - _z) / width;
         // Debug.Log($"Origin Index: {index}, x: {_x}, z: {_z}");
     }
+
+    #endregion
 
     /// <summary>
     /// Gets the index at the given position

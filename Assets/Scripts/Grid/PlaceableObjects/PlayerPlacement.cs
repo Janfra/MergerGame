@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class PlayerPlacement : ObjectMerge
 {
+    /// <summary>
+    /// Invoked when this object creates a move command.
+    /// </summary>
+    public event Action OnCommandCreated;
+
     [SerializeField] 
     private MouseDragHandler dragHandler;
     [SerializeField]
@@ -33,12 +38,12 @@ public class PlayerPlacement : ObjectMerge
     private void OnDestroy()
     {
         TurnManager.OnActionsCompleted -= SetEnable;
+        OnCommandCreated = null;
     }
 
     protected override void OnMouseDown()
     {
         base.OnMouseDown();
-        GameManager.SetSelectedObject(this);
         selectionTimer.StartTimer(this);
     }
 
@@ -147,6 +152,7 @@ public class PlayerPlacement : ObjectMerge
             }
             else
             {
+                OnCommandCreated?.Invoke();
                 CreateMoveCommand(_tileFound);
             }
         }

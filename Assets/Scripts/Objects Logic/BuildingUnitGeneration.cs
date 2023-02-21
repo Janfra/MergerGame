@@ -5,21 +5,23 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(PlaceableObject))]
-public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInteractive
+public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInteractive, IOnTileClickableEvent
 {
     [Header("References")]
     [SerializeField]
-    private PlacementEvents placementEvents;
+    private PlaceableEvents placementEvents;
 
     [Header("Config")]
     [SerializeField]
     private List<PlaceableObject> unitsAvailable;
 
+    #region Unity Functions
+
     private void Awake()
     {
         if(placementEvents == null)
         {
-            placementEvents = GetComponent<PlacementEvents>();
+            placementEvents = GetComponent<PlaceableEvents>();
         }
     }
 
@@ -27,18 +29,20 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInterac
     {
         if (placementEvents == null)
         {
-            placementEvents = GetComponent<PlacementEvents>();
+            placementEvents = GetComponent<PlaceableEvents>();
         }
 
         placementEvents.OnSelected += HighlightValidTiles;
-        placementEvents.OnPlacementEvent += (placementTile, caller) => GenerateAtPlacement(placementTile);
+        placementEvents.OnPlacementEvent += BindPlacementCommandGeneration;
     }
 
     private void OnDisable()
     {
-        placementEvents.OnSelected += HighlightValidTiles;
-        placementEvents.OnPlacementEvent += (placementTile, caller) => GenerateAtPlacement(placementTile);
+        placementEvents.OnSelected -= HighlightValidTiles;
+        placementEvents.OnPlacementEvent -= BindPlacementCommandGeneration;
     }
+
+    #endregion
 
     private void HighlightValidTiles()
     {
@@ -47,15 +51,21 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInterac
         {
             foreach (GridTile tile in validTiles)
             {
-                placementEvents.AddTileToEvent(tile);
+                placementEvents.AddTileToEvent(tile, this);
             }
         }
     }
 
-    private void GenerateAtPlacement(GridTile _tile)
+    private void BindPlacementCommandGeneration(GridTile _placementTile, PlaceableObject _context2)
+    {
+        GenerateGenerationCommandAt(_placementTile);
+    }
+
+    private void GenerateGenerationCommandAt(GridTile _tile)
     {
         // For now just set
         CreateGenerationCommand(_tile);
+        placementEvents.ClearEventTiles();
     }
 
     private void GenerateUnitOnRandomValidTile()
@@ -102,13 +112,30 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInterac
         return validTiles.ToArray();
     }
 
+    #region IUnitGeneration
+
     public void GenerateUnitAt(GridTile _tile, PlaceableObject _generatedUnit)
     {
         Instantiate(_generatedUnit).PlaceOnTile(_tile);
     }
 
+    #endregion
+
+    #region IUIInteractive
+
     public void OnInteracted()
     {
         GenerateUnitOnRandomValidTile();
     }
+
+    #endregion
+
+    #region IOnTileClickable
+
+    public void OnTileSelected(GridTile _tile)
+    {
+        GenerateGenerationCommandAt(_tile);
+    }
+
+    #endregion
 }
