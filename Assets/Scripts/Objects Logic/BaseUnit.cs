@@ -1,18 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseUnit : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private SO_GenerateCurrency incomeGeneration;
+
+    #region Unity Functions
+
+    private void OnEnable()
     {
-        
+        TurnManager.OnPlayerTurn += GenerateIncome;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        TurnManager.OnPlayerTurn -= GenerateIncome;
+    }
+
+    private void OnDestroy()
+    {
+        TurnManager.OnPlayerTurn -= GenerateIncome;
+    }
+
+    #endregion
+
+    private void GenerateIncome()
+    {
+        incomeGeneration.GenerateIncome();
     }
 }

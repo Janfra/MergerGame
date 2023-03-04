@@ -7,10 +7,16 @@ public interface IUnitGeneration
 {
     public static event Action<UnitGenerationInfo> OnUnitGenerationCommand;
 
+    public int GenerationPrice { get; set; }
+
     protected static void UnitGenerationCommand(UnitGenerationInfo _generationInformation)
     {
         OnUnitGenerationCommand?.Invoke(_generationInformation);
     }
+
+    void RemovePrice();
+
+    void ReturnPrice();
 
     void GenerateUnitAt(GridTile _tile, PlaceableObject _generatedUnit);
 

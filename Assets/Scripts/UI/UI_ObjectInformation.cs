@@ -20,26 +20,24 @@ public class UI_ObjectInformation : MonoBehaviour
 
     private GameObject selectedObject;
 
-    private void Awake()
-    {
-        CheckReferences();
-
-        PlaceableObject.OnSelectedObjectChange += SetSelectedObject;
-        TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
-    }
-
     private void OnEnable()
     {
         CheckReferences();
 
         PlaceableObject.OnSelectedObjectChange += SetSelectedObject;
-        TurnManager.OnTurnUpdated += (context1, context2) => GetObjectIntent();
+        TurnManager.OnTurnUpdated += BindObjectIntentGetter;
+    }
+
+    private void OnDisable()
+    {
+        TurnManager.OnCommandCreated -= CheckCommand;
+        TurnManager.OnTurnUpdated -= BindObjectIntentGetter;
     }
 
     private void OnDestroy()
     {
         TurnManager.OnCommandCreated -= CheckCommand;
-        TurnManager.OnTurnUpdated -= (context1, context2) => GetObjectIntent();
+        TurnManager.OnTurnUpdated -= BindObjectIntentGetter;
     }
 
     /// <summary>
@@ -73,6 +71,15 @@ public class UI_ObjectInformation : MonoBehaviour
         {
             SetObjectIntent(_command.ToString());
         }
+    }
+
+
+    /// <summary>
+    /// Binds the object intent getter to new turn event 
+    /// </summary>
+    private void BindObjectIntentGetter(int _context1, TurnState _context2)
+    {
+        GetObjectIntent();
     }
 
     #region Setters & Getters

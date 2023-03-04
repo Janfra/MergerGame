@@ -1647,6 +1647,51 @@ MonoBehaviour:
   zoomSpeed: 1
   maxHeight: 0
   minHeight: 0
+--- !u!1 &963366905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 963366907}
+  - component: {fileID: 963366906}
+  m_Layer: 0
+  m_Name: PlayerContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &963366906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963366905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72810f6b340c91b48bcd69419b6ebd50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  earnedCurrency: 0
+--- !u!4 &963366907
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963366905}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 483.20013, y: 303.43683, z: -7.194988}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149331094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1909,6 +1954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ef126e4ae60ab4eaeaee3b816b9b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  generationPrice: 10
   placementEvents: {fileID: 1296260571}
   unitsAvailable:
   - {fileID: 1260874452}
@@ -1959,12 +2005,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1358037180}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9645e4b8d217cfd4abad04c813da3de5, type: 3}
+  m_Script: {fileID: 11500000, guid: 3eee725e7f5123b4c9f4a8befbcce710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnText: {fileID: 0}
-  turnCountText: {fileID: 1745708916}
-  turnAnimations: {fileID: 0}
+  currencyText: {fileID: 1745708916}
+  currencyAnimation: {fileID: 0}
 --- !u!1 &1461401137
 GameObject:
   m_ObjectHideFlags: 0
@@ -2349,7 +2394,7 @@ GameObject:
   - component: {fileID: 1745708917}
   - component: {fileID: 1745708916}
   m_Layer: 5
-  m_Name: TurnCount
+  m_Name: Money Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -15,6 +15,7 @@ public class GenerateUnitCommand : ICommand
         this.generator = generator;
 
         placementTile.SetOccupyingObject(generatedUnit, false);
+        generator.RemovePrice();
     }
 
     public void Execute()
@@ -25,6 +26,7 @@ public class GenerateUnitCommand : ICommand
 
     public void Undo()
     {
+        generator.ReturnPrice();
         placementTile.SetOccupyingObject(null, false);
         placementTile.UnHighlight();
     }

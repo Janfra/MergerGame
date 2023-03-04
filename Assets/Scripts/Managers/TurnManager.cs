@@ -10,17 +10,22 @@ public class TurnManager : MonoBehaviour
     private static TurnManager Instance;
 
     /// <summary>
-    /// Event once a new turn starts with new turn information
+    /// Event once a new turn starts with new turn information.
     /// </summary>
     public static event Action<int, TurnState> OnTurnUpdated;
 
     /// <summary>
-    /// Event called when all actions have been completed
+    /// Event called once a new player turn starts.
+    /// </summary>
+    public static event Action OnPlayerTurn;
+
+    /// <summary>
+    /// Event called when all actions have been completed.
     /// </summary>
     public static event Action<bool> OnActionsCompleted;
 
     /// <summary>
-    /// Sends command recently created
+    /// Sends command recently created.
     /// </summary>
     public static event Action<GameObject, ICommand> OnCommandCreated;
 
@@ -53,7 +58,7 @@ public class TurnManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            OnTurnUpdated += (context1, context2) => ExecuteActions();
+            OnTurnUpdated += ExecuteActions;
             ICommand.IsCompleted += StartClearingQueue;
 
             ObjectMerge.OnMergeCommand += CreateMergeCommand;
@@ -64,6 +69,24 @@ public class TurnManager : MonoBehaviour
         else
         {
             Destroy(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Clear all events
+        if(Instance == this)
+        {
+            OnTurnUpdated = null;
+            OnPlayerTurn = null;
+            OnCommandCreated = null;
+            OnActionsCompleted = null;
+
+            ICommand.IsCompleted -= StartClearingQueue;
+            ObjectMerge.OnMergeCommand -= CreateMergeCommand;
+            PlaceableObject.OnMoveCommand -= CreateMoveCommand;
+            UI_ObjectInformation.OnRequestObjectCommand -= FindObjectCommand;
+            IUnitGeneration.OnUnitGenerationCommand -= CreateGenerationCommand;
         }
     }
 
@@ -193,7 +216,7 @@ public class TurnManager : MonoBehaviour
     /// <summary>
     /// Stores actions to be done this turn and start clearing them.
     /// </summary>
-    private void ExecuteActions()
+    private void ExecuteActions(int _turnCount, TurnState _turnState)
     {
         SetActionsCompleted(false);
         if(currentTurn == TurnState.PlayerTurn)
@@ -259,6 +282,11 @@ public class TurnManager : MonoBehaviour
             TurnState stateUpdate = (TurnState)(totalTurnCount % (int)TurnState.TOTAL_TURN_STATES);
             currentTurn = stateUpdate;
             OnTurnUpdated?.Invoke(turnCountByStates, currentTurn);
+
+            if(currentTurn == TurnState.PlayerTurn)
+            {
+                OnPlayerTurn?.Invoke();
+            }
         }
     }
 

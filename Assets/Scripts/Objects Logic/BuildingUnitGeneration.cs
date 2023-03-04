@@ -7,6 +7,19 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(PlaceableObject))]
 public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInteractive, IOnTileClickableEvent
 {
+    [SerializeField]
+    private int generationPrice = 10;
+    public int GenerationPrice { 
+        get 
+        {
+            return generationPrice;
+        }
+        set
+        {
+
+        }
+    }
+
     [Header("References")]
     [SerializeField]
     private PlaceableEvents placementEvents;
@@ -63,9 +76,15 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInterac
 
     private void GenerateGenerationCommandAt(GridTile _tile)
     {
-        // For now just set
-        CreateGenerationCommand(_tile);
-        placementEvents.ClearEventTiles();
+        if (PlayerCurrency.Instance.Currency >= generationPrice)
+        {
+            CreateGenerationCommand(_tile);
+            placementEvents.ClearEventTiles();
+        }
+        else
+        {
+            Debug.Log("Not enough money");
+        }
     }
 
     private void GenerateUnitOnRandomValidTile()
@@ -113,6 +132,16 @@ public class BuildingUnitGeneration : MonoBehaviour, IUnitGeneration, IUIInterac
     }
 
     #region IUnitGeneration
+
+    public void RemovePrice()
+    {
+        PlayerCurrency.Instance.RemoveCurrency(generationPrice);
+    }
+
+    public void ReturnPrice()
+    {
+        PlayerCurrency.Instance.AddCurrency(generationPrice);
+    }
 
     public void GenerateUnitAt(GridTile _tile, PlaceableObject _generatedUnit)
     {
