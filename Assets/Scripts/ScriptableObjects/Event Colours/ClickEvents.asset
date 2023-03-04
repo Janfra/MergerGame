@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2854c13b442cf6844aaa82099ac15503, type: 3}
   m_Name: ClickEvents
   m_EditorClassIdentifier: 
-  eventHighlightColour: {r: 0, g: 0, b: 0, a: 0}
+  eventColour: {r: 0, g: 0.5821352, b: 1, a: 0}

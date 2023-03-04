@@ -11,6 +11,8 @@ public class UI_TurnInformation : MonoBehaviour
     private TextMeshProUGUI turnText;
     [SerializeField]
     private TextMeshProUGUI turnCountText;
+    [SerializeField]
+    private Animator turnAnimations;
 
     private void Awake()
     {
@@ -38,6 +40,7 @@ public class UI_TurnInformation : MonoBehaviour
 
     private void SetFactionTurn(TurnState _turnState)
     {
+        turnAnimations.SetTrigger("NewTurn");
         switch (_turnState)
         {
             case TurnState.PlayerTurn:
